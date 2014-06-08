@@ -31,15 +31,6 @@ td.text-middle                      { vertical-align: middle!important; }
 
 .alvp:after                         { content: "%"; }
 
-.last-td-takes-all tr td:last-child { width: 100%; text-align: right; }
-.last-td-text-right tr td:last-child { text-align: right; }
-
-.td-first-50,
-.td-first-50 thead,
-.td-first-50 tbody,
-.td-first-50 tr                { width: 100%; text-align: right; }
-.td-first-50 tr td:first-child { width: 50%; text-align: left; }
-
 .only-first-td-text-left tr td      { text-align: right; }
 .only-first-td-text-left tr td:first-child { text-align: left; }
 
@@ -96,7 +87,7 @@ section                             { padding: 1em 0; }
 #barcode                            { line-height: 0; display: block; margin: 0 auto; margin-top: 10mm; }
 
 #controls                           { position: fixed; top: 2.3em; right: 0; width: 140px; padding: 1em; border: 1px solid #cecece; box-shadow: 1px 1px 3px #cecece; background: #fff; }
-.notification                       { position: fixed; left: 50%; bottom: -2em; width: 200px; margin-left: -100px; overflow: hidden; background: #8fd68f; text-align: center; line-height: 2em; border-radius: 3px 3px 0 0; transition: 0.3s all; }
+.notification                       { position: fixed; left: 50%; bottom: -2em; width: 400px; margin-left: -200px; overflow: hidden; background: #8fd68f; color: #000; text-align: center; line-height: 2em; border-radius: 3px 3px 0 0; transition: 0.3s all; }
 .notification.active                { bottom: 0em; }
 .notification.warn                  { background: #d6d38f; }
 
@@ -108,6 +99,7 @@ section                             { padding: 1em 0; }
 
 @media screen {
     body                            { min-width: 990px; background-image: url(img/watermark.png); background-attachment: fixed; background-position-y: -100px; background-position-x: -90px; }
+    #page:hover *[contenteditable="true"]       { box-shadow: inset 0 0 2px #dbdbdb; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAO0lEQVQYV2NkIAIwElJz+/bt/3gVgRSoqqoyEjQJZBNWRTATYE7BUISuAKdJ6J6Bm4TNBBTr8CkAKQQAPTMXmqBRn6kAAAAASUVORK5CYII=); }
 }
 
 @media screen and (max-width: 1170px) {

@@ -8,7 +8,7 @@
      * Helper functions 
      */
     var text = function(el, txt) {
-        if (txt) el.textContent = txt;
+        if (txt != undefined) el.textContent = txt;
         else return el.textContent;
     };
 
