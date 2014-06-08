@@ -152,7 +152,7 @@
         }
     };
     
-    BillMachine.new();
+    BillMachine.init();
     loadSavedList();
 
 })(window, document);

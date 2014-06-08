@@ -116,7 +116,6 @@
     JobRow.newJobRowEl = doc.querySelector("#new-job-row");
     JobRow.prototype.remove = function() {
         this.el.remove();
-        delete this;
     };
     JobRow.prototype.delEvent = function(evt) {
         evt.preventDefault();
@@ -315,7 +314,7 @@
         JobRow.newJobRowEl.addEventListener("click", addJobRow, false);
     };
     
-    BillMachine.new = function() {
+    BillMachine.init = function() {
         isUpdating = true;
         BillMachine.initPage();
         BillMachine.update();
