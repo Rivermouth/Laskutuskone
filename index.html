@@ -5,7 +5,7 @@
         <title>Laskutuskone</title>
         <link rel="stylesheet" href="stamp.css">
         <link rel="stylesheet" href="styles.css">
-        <script src="lib/pankkiviivakoodi/dist/pankkiviivakoodi-all.min.js"></script>
+        <script src="lib/pankkiviivakoodi/dist/pankkiviivakoodi-all.js"></script>
     </head>
     <body>
     
@@ -24,7 +24,7 @@
                         <td>Päiväys</td><td class="date-today" id="date"></td>
                     </tr>
                     <tr>
-                        <td>Eräpäivä</td><td id="date-pay"></td>
+                        <td>Eräpäivä</td><td id="date-pay" class="date-pay"></td>
                     </tr>
                     <tr>
                         <td>Maksuehto</td><td><span contenteditable="true" id="dates-to-pay">14</span><span>&nbsp;päivää netto</span></td>
@@ -41,7 +41,7 @@
             <section class="row">
                 <div class="w-60p">
                     <b>Lisätiedot</b>
-                    <div contenteditable="true">Lasku 1.2. - 29.2.2012 väliseltä ajalta</div>
+                    <div contenteditable="true" id="additional-info">Lasku 1.2. - 29.2.2012 väliseltä ajalta</div>
                 </div>
             </section>
             <section>
@@ -71,7 +71,7 @@
             </section>
             <footer>
                 <div contenteditable="true">&nbsp;</div>
-                <hr>
+                <hr class="dashed">
                 <table class="w-100p text-top" id="info">
                     <tbody>
                         <td contenteditable="true" id="footer-1">
@@ -102,13 +102,13 @@
                         <tr>
                             <td class="first">Saaja</td>
                             <td>Rivermouth Oy</td>
-                            <td rowspan="2" colspan="3" class="noborder-bottom">maksunimi<br><br><br></td>
+                            <td rowspan="2" colspan="3" id="bill-name" class="noborder-bottom" contenteditable="true">Laskun nimi<br><br><br></td>
                             
                             
                         </tr>
                         <tr>
                             <td rowspan="2" class="noborder-bottom first">Maksaja</td>
-                            <td rowspan="2" class="noborder client-info" contenteditable="true"></td>
+                            <td rowspan="2" class="noborder"><div class="client-info" contenteditable="true"></div><br></td>
                             
                             
                         </tr>
@@ -120,15 +120,15 @@
                             <td class="first">Allekirjoitus</td>
                             <td class="noborder-left"><hr class="underline"></td>
                             <td>Viitenro</td>
-                            <td colspan="2" id="refnum"></td>
+                            <td colspan="2" id="refnum" class="text-middle"></td>
                             
                         </tr>
                         <tr>
                             <td class="first">Tililtä nro</td>
                             <td></td>
                             <td>Eräpäivä</td>
-                            <td>26.3.2014</td>
-                            <td class="total"></td>
+                            <td class="date-pay text-middle"></td>
+                            <td class="total text-middle"></td>
                         </tr>
                     </tbody>
                 </table>

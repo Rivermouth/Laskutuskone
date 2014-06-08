@@ -22,6 +22,9 @@
     bn.O.prototype.getValue = function() {
         return this.value;
     };
+    bn.O.prototype.remove = function() {
+        this.link.remove(this);
+    };
     
     /* bn link */
     bn.Link = function() {
@@ -59,6 +62,7 @@
     };
     bn.Link.prototype.remove = function(bno) {
         this.items[bno._id] = undefined;
+        this.notify();
     };
     bn.Link.prototype.setValue = function(value) {
         this.onChange(value);
@@ -72,6 +76,7 @@
     };
     bn.Link.prototype.notify = function() {   
         for (var i=0, l=this.items.length; i<l; ++i) {
+            if (this.items[i] == undefined) continue;
             if (this.items[i].onChange) this.items[i].onChange(this.value);
         }
         
@@ -130,6 +135,7 @@
     
     win["bn"] = bn.Link;
     win["bn"].O = bn.O;
+    win["bn"].E = bn.E;
     win["bn"].oneway = bn.oneway;
 
 })(window, document);
