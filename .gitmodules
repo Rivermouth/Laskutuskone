@@ -1,0 +1,3 @@
+[submodule "lib/pankkiviivakoodi"]
+	path = lib/pankkiviivakoodi
+	url = git@github.com:karrirasinmaki/Pankkiviivakoodi.git

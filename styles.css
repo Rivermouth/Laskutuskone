@@ -1,0 +1,104 @@
+html                                { margin: 0; padding: 0; font-size: 16px; }
+body                                { margin: 0; padding: 0; line-height: 1.4em; }
+
+span                                { display: inline-block; }
+
+#page                               { position: relative; }
+#page.a4                            { width: 210mm; height: 296mm; margin: 2.3em auto; border: 1px solid #cecece; box-shadow: 1px 1px 3px #cecece; box-sizing: border-box; padding: 1.7em 20px; padding-left: 80px; }
+
+#page header                        { font-size: 1.2em; padding-top: 0.5em; padding-bottom: 0.2em; }
+
+footer                              { position: absolute; left: 80px; right: 20px; bottom: 2mm; font-size: 12px; }
+
+table,
+table tbody,
+table thead,
+table tfoot
+table tr                            { width: 100%; }
+
+.aprice:after,
+.alve:after, 
+.sum:after,
+#novat-total:after,
+#vat-total:after,
+#total:after                        { content: " €"; }
+
+.alvp:after                         { content: "%"; }
+
+.last-td-takes-all tr td:last-child { width: 100%; text-align: right; }
+.last-td-text-right tr td:last-child { text-align: right; }
+
+.td-first-50,
+.td-first-50 thead,
+.td-first-50 tbody,
+.td-first-50 tr                { width: 100%; text-align: right; }
+.td-first-50 tr td:first-child { width: 50%; text-align: left; }
+
+.only-first-td-text-left tr td      { text-align: right; }
+.only-first-td-text-left tr td:first-child { text-align: left; }
+
+td.td-no-wrap,
+.td-no-wrap td                      { white-space: nowrap; }
+
+.border-bottom td                   { border-bottom: 1px solid #000; padding-bottom: 0.4em; }
+.padding-top td                     { padding-top: 0.7em!important; }
+
+.text-bold                          { font-weight: bold; }
+.text-bigger                        { font-size: 1.2em; }
+
+table.text-top tr td                { vertical-align: top; }
+
+hr                                  { height: 0; border: none; border-bottom: 1px solid #000; margin: 1em 0; }
+hr.underline                        { margin-bottom: 0; }
+
+.with-borders td,
+.with-borders th                    { border: 1px solid #000; }
+
+.with-ver-borders                   { border: 1px solid #000; }
+.with-ver-borders td,
+.with-ver-borders th                { border-left: 1px solid #000; border-right: 1px solid #000; }
+
+.with-space td,
+.with-ver-borders td                { padding: 0.2em 2px; }
+
+.with-x-space td                    { padding-left: 6px; padding-right: 6px; }
+
+.without-borders td                 { border: 0!important; }
+
+table thead                         { font-weight: bold; }
+section                             { padding: 1em 0; }
+
+#new-job-row                        { height: 2em; color: rgba(0,0,0,0.3); }
+#new-job-row:after                  { content: "+"; position: absolute; color: #000; box-sizing: border-box; width: 28px; height: 28px; line-height: 28px; text-align: center; margin: 5px; font-size: 1.8em; background: #fff; border: 1px solid #000; border-radius: 3px; }
+
+.client-info                        { white-space: pre-line; text-align: left; }
+
+#info                               { line-height: 1.1em; margin: 1.3em 0; }
+
+#tilisiirto                         { width: calc(100% + 67px); margin-left: -67px; line-height: 1.1em; }
+#tilisiirto td                      { box-sizing: border-box; border-bottom: 2px solid #000; border-left: 2px solid #000; height: 26px; }
+#tilisiirto td.first                { width: 65px; text-align: right; }
+#tilisiirto td:nth-child(3)         { width: 9%; }
+#tilisiirto td:last-child           { border-right: 0; }
+#tilisiirto td.noborder             { border-bottom: 0; border-left: 0; }
+#tilisiirto td.noborder-bottom      { border-bottom: 0; }
+#tilisiirto td.noborder-left        { border-left: 0; }
+#tilisiirto .total                  { text-align: right; position: relative; }
+#tilisiirto .total:before           { content: "Euro"; text-align: left; position: absolute; left: 2px; }
+
+#barcode                            { line-height: 0; display: block; margin: 0 auto; margin-top: 1em; }
+
+#controls                           { position: fixed; top: 2.3em; right: 0; width: 140px; padding: 1em; border: 1px solid #cecece; box-shadow: 1px 1px 3px #cecece; background: #fff; }
+
+#saved-bills                        { border-top: 1px solid #cecece; border-bottom: 1px solid #cecece; }
+.list-item                          { border-bottom: 1px solid #cecece; padding: 0.2em 6px; }
+.list-item:last-child               { border-bottom: 0; }
+.list-item:hover                    { background: #ebebeb; }
+.list-item.selected                 { background: #f9f9f9; font-weight: bold; }
+
+
+@media print {
+    #page                           { margin: 0!important;; box-shadow: none!important;; border: 0!important; }
+    #controls,
+    #new-job-row                    { display: none; }
+}
