@@ -52,7 +52,13 @@
      * Helper functions 
      */
     
+    /* Strings */
+    var CONFIRM_DELETE      = "Haluatko varmasti poistaa kyseisen kohteen?"
+    ;
+    
     /* Elements */
+    var billerNameEl = doc.querySelector("#biller-name");
+    var paymentReceiverEl = doc.querySelector("#payment-receiver");
     var billInfoTable = doc.querySelector("#bill-info-table");
     var billIdEl = doc.querySelector("#bill-id");
     var billNameEl = doc.querySelector("#bill-name");
@@ -69,6 +75,7 @@
     var novatTotalEl = doc.querySelector("#novat-total");
     var vatTotalEl = doc.querySelector("#vat-total");
     var totalEl = doc.querySelector("#total");
+    var notesEl = doc.querySelector("#notes");
     var footer1El = doc.querySelector("#footer-1");    
     var footer2El = doc.querySelector("#footer-2");    
     var footer3El = doc.querySelector("#footer-3");
@@ -113,7 +120,7 @@
     };
     JobRow.prototype.delEvent = function(evt) {
         evt.preventDefault();
-        if (confirm("Really delete?")) {
+        if (confirm(CONFIRM_DELETE)) {
             this.remove();
         }
     };
@@ -164,6 +171,7 @@
         this.count();
     };
     
+    var isUpdating = false;
     
     var date;
     var jobRows = [];
@@ -192,28 +200,30 @@
 
     var datesToPayElBnE = new bn.E(datesToPayEl);
 
-    var accountNumberBn = new bn("#account-number").setValue(text(accountNumberEl));
-    new bn(".account-shortcode").setValue(text(accountShortCodeEl));
-    new bn(".client-info").setValue(text(clientEl));
+    var accountNumberBn = new bn("#account-number");
+    var accountShortCodeBn = new bn(".account-shortcode");
+    var clientInfoBn = new bn(".client-info");
+    var dateBn = new bn(billInfoDatePayBnO, datesToPayElBnE);
+    var refnumBn = new bn(refNumBnO, billIdEl, ".bill-id");
 
     var barcodeBnListener = new bn(dateBn, refnumBn, accountNumberBn, totalElBn);
     barcodeBnListener.onChange = function() {
         var sum = (""+totalElBn.getValue()).split(".");
         var d = (""+billInfoDatePayBnO.getValue()).split(".");
 
-        try {
-            Pankkiviivakoodi.strict = true;
-            Pankkiviivakoodi.luo(barcodeEl, accountNumberBn.getValue(), 
-                                 sum[0], sum[1], (""+refNumBnO.getValue()), 
-                                 d[0], d[1], d[2]);
-        }
-        catch(e) {
-            console.warn(e);
+        if (!isUpdating) {
+            try {
+                Pankkiviivakoodi.strict = true;
+                Pankkiviivakoodi.luo(barcodeEl, accountNumberBn.getValue(), 
+                                     sum[0], sum[1], (""+refNumBnO.getValue()), 
+                                     d[0], d[1], d[2]);
+            }
+            catch(e) {
+                console.warn(e);
+                BillMachine.notification(e, BillMachine.notification.TYPE_WARN);
+            }
         }
     };
-
-    var dateBn = new bn(billInfoDatePayBnO, datesToPayElBnE);
-    var refnumBn = new bn(refNumBnO, billIdEl, ".bill-id");
     
     var calcRefNum = function(billId) {
         var wc = 0;
@@ -283,18 +293,33 @@
     var BillMachine = {};
     
     BillMachine.initPage = function() {
-
         date = new Date();
 
         totalBn = new bn(totalBnListener);
 
         deleteAllJobRows();
+    };
+    BillMachine.update = function() {
+        
+        accountNumberBn.setValue(text(accountNumberEl));
+        accountShortCodeBn.setValue(text(accountShortCodeEl));
+        clientInfoBn.setValue(text(clientEl));
 
+        refnumBn.setValue(text(billIdEl));
+    
         fillDataTodays();
 
-        JobRow.newJobRowEl.addEventListener("click", addJobRow, false);
-
         datesToPayElBnE.notify();
+        accountNumberBn.notify();
+        
+        JobRow.newJobRowEl.addEventListener("click", addJobRow, false);
+    };
+    
+    BillMachine.new = function() {
+        isUpdating = true;
+        BillMachine.initPage();
+        BillMachine.update();
+        isUpdating = false;
     };
     
     BillMachine.addJobRow = addJobRow;
@@ -320,6 +345,9 @@
 
     BillMachine.getJSON = function() {
         return {
+            biller_name: text(billerNameEl),
+            payment_receiver: text(paymentReceiverEl),
+            
             bill_name: text(billNameEl),
             bill_id: text(billIdEl),
             ref_num: text(refnumEl),
@@ -341,13 +369,21 @@
 
             job_rows: BillMachine.getJobRowsJSON(),
 
-            footer1: html(footer1El),
-            footer2: html(footer2El),
-            footer3: html(footer3El)
+            footer1: text(footer1El),
+            footer2: text(footer2El),
+            footer3: text(footer3El),
+            
+            notes: text(notesEl)
         };
     };
 
     BillMachine.loadFromJSON = function(json) {
+        isUpdating = true;
+        BillMachine.initPage();
+        
+        text(billerNameEl, json.biller_name);
+        text(paymentReceiverEl, json.payment_receiver);
+        
         text(billNameEl, json.bill_name);
         text(billIdEl, json.bill_id);
         
@@ -359,14 +395,42 @@
         text(additionalInfoEl, json.additional_info);
         
         text(accountNumberEl, json.account_number);
-        text(accountShortCodeEl, json.account_number);
+        text(accountShortCodeEl, json.account_shortcode);
         
         BillMachine.setJobRowsFromJSON(json.job_rows);
         
-        html(footer1El, json.footer1);
-        html(footer2El, json.footer2);
-        html(footer3El, json.footer3);
+        text(footer1El, json.footer1);
+        text(footer2El, json.footer2);
+        text(footer3El, json.footer3);
+        
+        text(notesEl, json.notes);
+        
+        BillMachine.update();
+        isUpdating = false;
+        barcodeBnListener.onChange();
     };
+    
+    BillMachine.notification = function(msg, type) {
+        if (!type) type = BillMachine.notification.TYPE_OK;
+        
+        var el = doc.createElement("div");
+        el.className = "notification " + type;
+        el.textContent = msg;
+        
+        doc.body.appendChild(el);
+        
+        setTimeout(function() {
+            el.className += " active ";
+        }, 100);
+        setTimeout(function() {
+            el.className = el.className.replace(" active", "");
+        }, 1000);
+        setTimeout(function() {
+            el.remove();
+        }, 1300);
+    };
+    BillMachine.notification.TYPE_OK = "ok";
+    BillMachine.notification.TYPE_WARN = "warn";
     
     win["BillMachine"] = BillMachine;
     

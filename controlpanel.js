@@ -4,7 +4,20 @@
 
 (function(win, doc) {
     
+    /* Strings */
+    var SAVE        = "Tallenna",
+        SAVED       = "Tallennettu",
+        LOADED      = "Ladattu",
+        DELETED     = "Poistettu",
+        NEW         = "Uusi",
+        
+        NO_SAVE_FILE_NAME_NOTIF     = "Anna tiedostonimi.",
+        CONFIRM_LOST_UNSAVED        = "Tallentamattomat tiedot menetetään. Haluatko jatkaa?",
+        CONFIRM_BILL_DELETE         = "Haluatko varmasti poistaa tallennetun laskun?"
+    ;
+    
     /* Elements */
+    var body = doc.getElementsByTagName("body")[0];
     var controlPanel = doc.querySelector("#controls");
     var saveNameInputEl = doc.querySelector("#save-name");
     var saveButtonEl = doc.querySelector("#save");
@@ -12,21 +25,8 @@
     var newButtonEl = doc.querySelector("#new");
     var savedBillsEl = doc.querySelector("#saved-bills");
     
-    var notification = function(msg) {
-        var el = doc.createElement("div");
-        el.className = "notification";
-        el.textContent = msg;
-        
-        controlPanel.appendChild(el);
-        setTimeout(function() {
-            el.className += " active";
-        }, 100);
-        setTimeout(function() {
-            el.className = el.className.replace(" active", "");
-        }, 1000);
-        setTimeout(function() {
-            el.remove();
-        }, 1300);
+    var notification = function(msg, type) {
+        BillMachine.notification(msg, type);
     };
     
     var hasChanges = false;
@@ -45,24 +45,23 @@
     setHasChangesFalse();
     
     var hasChangesCheck = function() {
-        return !hasChanges || confirm("All unsaved changes will be lost! Proceed?");
+        return !hasChanges || confirm(CONFIRM_LOST_UNSAVED);
     };
     
     var deleteSaved = function(name) {
-        if (confirm("Really delete saved bill?")) {
+        if (confirm(CONFIRM_BILL_DELETE)) {
             localStorage.removeItem(name);
             loadSavedList();
-            notification("Deleted");
+            notification(DELETED);
         };
     };
     
     var openSaved = function(name) {
         if (hasChangesCheck()) {
-            BillMachine.initPage();
             BillMachine.loadFromJSON(JSON.parse(localStorage[name]));
             saveNameInputEl.value = name;
             setHasChangesFalse();
-            notification("Loaded");
+            notification(LOADED);
             return true;
         }
         return false;
@@ -71,7 +70,7 @@
     var save = function(name) {
         setHasChangesFalse();
         localStorage[name] = JSON.stringify(BillMachine.getJSON());
-        notification("Saved");
+        notification(SAVED);
     };
     
     var prevSavedSel = undefined;
@@ -115,7 +114,7 @@
     var getSaveName = function() {
         var name = saveNameInputEl.value;
         if (name <= 0) {
-            alert("Please, give proper name");
+            alert(NO_SAVE_FILE_NAME_NOTIF);
             return false;
         }
         return name;
@@ -137,11 +136,11 @@
     
     newButtonEl.addEventListener("click", function() {
         if (hasChangesCheck()) {
-            location.reload()
+            location.reload();
         }
     }, false);
     
-    BillMachine.initPage();
+    BillMachine.new();
     loadSavedList();
 
 })(window, document);

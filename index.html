@@ -12,7 +12,7 @@
         <div id="page" class="a4">
             <table class="col" id="bill-info-table">
                 <thead class="border-bottom text-bigger">
-                    <tr><td contenteditable="true" id="biller-name">Rivermouth Oy</td><td>LASKU</td><td></td></tr>
+                    <tr><td contenteditable="true" id="biller-name">Laskuttaja Oy</td><td>LASKU</td><td></td></tr>
                 </thead>
                 <tbody>
                     <tr class="padding-top">
@@ -41,7 +41,7 @@
             <section class="row">
                 <div class="w-60p">
                     <b>Lisätiedot</b>
-                    <div contenteditable="true" id="additional-info">Lasku 1.2. - 29.2.2012 väliseltä ajalta</div>
+                    <div contenteditable="true" id="additional-info">Lasku 1.2. - 29.2.2014 väliseltä ajalta</div>
                 </div>
             </section>
             <section>
@@ -70,22 +70,22 @@
                 </table>
             </section>
             <footer>
-                <div contenteditable="true">&nbsp;</div>
+                <div contenteditable="true" id="notes">Huomioita</div>
                 <hr class="dashed">
                 <table class="w-100p text-top" id="info">
                     <tbody>
                         <td contenteditable="true" id="footer-1">
-                            Rivermouth Oy<br>
-                            Leppäsuonkatu 9 B 044<br>
+                            Laskuttaja Oy
+                            Laskutuskatu 9
                             00100 Helsinki
                         </td>
                         <td contenteditable="true" id="footer-2">
-                            +358 44 2644 912<br>
-                            hello@rivermouth.fi<br>
-                            www.rivermouth.fi
+                            +358 50 123 1234
+                            email@email.fi
+                            www.laskuttajaoy.fi
                         </td>
                         <td contenteditable="true" id="footer-3">
-                            Y-tunnus: 2617621-5	<br>
+                            Y-tunnus: 1234567-8
                             Kotipaikka Helsinki
                         </td>
                     </tbody>
@@ -101,7 +101,7 @@
                         </tr>
                         <tr>
                             <td class="first">Saaja</td>
-                            <td>Rivermouth Oy</td>
+                            <td id="payment-receiver" contenteditable="true">Saaja Sallinen</td>
                             <td rowspan="2" colspan="3" id="bill-name" class="noborder-bottom" contenteditable="true">Laskun nimi<br><br><br></td>
                             
                             
@@ -138,14 +138,14 @@
         
         <div id="controls">
             <div>
-                <b>Save</b>
-                <input type="text" class="w-100p" id="save-name">
-                <button class="w-100p" id="save">save</button>
-                <button class="w-100p" id="new">new</button>
+                <input type="text" class="w-100p" id="save-name" placeholder="Tiedostonimi">
+                <button class="w-100p" id="save">Tallenna</button>
             </div>
+            <br>
+            <button class="w-100p" id="new">Uusi</button>
             <br><br>
             <div>
-                <b>Saved bills</b>
+                <b>Tallennetut laskut</b>
                 <div id="saved-bills"></div>
             </div>
         </div>
