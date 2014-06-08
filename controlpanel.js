@@ -4,23 +4,44 @@
 
 (function(win, doc) {
     
-    var pageEl = doc.querySelector("#page");
+    /* Elements */
+    var controlPanel = doc.querySelector("#controls");
     var saveNameInputEl = doc.querySelector("#save-name");
     var saveButtonEl = doc.querySelector("#save");
     var loadButtonEl = doc.querySelector("#load");
     var newButtonEl = doc.querySelector("#new");
     var savedBillsEl = doc.querySelector("#saved-bills");
     
+    var notification = function(msg) {
+        var el = doc.createElement("div");
+        el.className = "notification";
+        el.textContent = msg;
+        
+        controlPanel.appendChild(el);
+        setTimeout(function() {
+            el.className += " active";
+        }, 100);
+        setTimeout(function() {
+            el.className = el.className.replace(" active", "");
+        }, 1000);
+        setTimeout(function() {
+            el.remove();
+        }, 1300);
+    };
+    
     var hasChanges = false;
+    
     var hasChangesEvent = function() {
         hasChanges = true;
         win.removeEventListener(hasChangesEvent);
     };
+    
     var setHasChangesFalse = function() {
         hasChanges = false;
         win.addEventListener("keydown", hasChangesEvent, false);
         win.addEventListener("contextmenu", hasChangesEvent, false);
     };
+    
     setHasChangesFalse();
     
     var hasChangesCheck = function() {
@@ -31,6 +52,7 @@
         if (confirm("Really delete saved bill?")) {
             localStorage.removeItem(name);
             loadSavedList();
+            notification("Deleted");
         };
     };
     
@@ -40,9 +62,16 @@
             BillMachine.loadFromJSON(JSON.parse(localStorage[name]));
             saveNameInputEl.value = name;
             setHasChangesFalse();
+            notification("Loaded");
             return true;
         }
         return false;
+    };
+    
+    var save = function(name) {
+        setHasChangesFalse();
+        localStorage[name] = JSON.stringify(BillMachine.getJSON());
+        notification("Saved");
     };
     
     var prevSavedSel = undefined;
@@ -95,8 +124,7 @@
     saveButtonEl.addEventListener("click", function() {
         var name = getSaveName();
         if(name) {
-            setHasChangesFalse();
-            localStorage[name] = JSON.stringify(BillMachine.getJSON());
+            save(name);
         }
     }, false);
     
