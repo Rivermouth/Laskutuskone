@@ -24,6 +24,8 @@
     var loadButtonEl = doc.querySelector("#load");
     var newButtonEl = doc.querySelector("#new");
     var savedBillsEl = doc.querySelector("#saved-bills");
+    var tilisiirtoEl = doc.querySelector("#tilisiirto");
+    var showTilisiirtoEl = doc.querySelector("#show-tilisiirto");
     
     var notification = function(msg, type) {
         BillMachine.notification(msg, type);
@@ -139,6 +141,16 @@
             location.reload();
         }
     }, false);
+    
+    var showTilisiirtoBn = new bn(showTilisiirtoEl);
+    showTilisiirtoBn.onChange = function(value) {
+        if (value) {
+            tilisiirtoEl.style.display = "block";
+        }
+        else {
+            tilisiirtoEl.style.display = "none";
+        }
+    };
     
     BillMachine.new();
     loadSavedList();

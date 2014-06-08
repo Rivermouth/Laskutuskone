@@ -87,49 +87,51 @@
                         </td>
                     </tbody>
                 </table>
-                <table class="text-top with-space" id="tilisiirto">
-                    <tbody>
-                        <tr>
-                            <td class="first">Saajan tilinumero</td>
-                            <td>IBAN<div id="account-number" contenteditable="true"></div></td>
-                            <td colspan="3" style="width: 50%;">BIC<div id="account-shortcode" contenteditable="true"></div></td>
-                            
-                            
-                        </tr>
-                        <tr>
-                            <td class="first">Saaja</td>
-                            <td id="payment-receiver" contenteditable="true">Saaja Sallinen</td>
-                            <td rowspan="2" colspan="3" id="bill-name" class="noborder-bottom" contenteditable="true">Laskun nimi<br><br><br></td>
-                            
-                            
-                        </tr>
-                        <tr>
-                            <td rowspan="2" class="noborder-bottom first">Maksaja</td>
-                            <td rowspan="2" class="noborder"><div class="client-info" contenteditable="true"></div><br></td>
-                            
-                            
-                        </tr>
-                        <tr>
-                            
-                            <td colspan="3">Laskun numero: <span class="bill-id"></span></td>
-                        </tr>
-                        <tr>
-                            <td class="first">Allekirjoitus</td>
-                            <td class="noborder-left"><hr class="underline"></td>
-                            <td>Viitenro</td>
-                            <td colspan="2" id="refnum" class="text-middle"></td>
-                            
-                        </tr>
-                        <tr>
-                            <td class="first">Tililtä nro</td>
-                            <td></td>
-                            <td>Eräpäivä</td>
-                            <td class="date-pay text-middle"></td>
-                            <td class="total text-middle"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <img id="barcode">
+                <div id="tilisiirto">
+                    <table class="text-top with-space">
+                        <tbody>
+                            <tr>
+                                <td class="first">Saajan tilinumero</td>
+                                <td>IBAN<div id="account-number" contenteditable="true"></div></td>
+                                <td colspan="3" style="width: 50%;">BIC<div id="account-shortcode" contenteditable="true"></div></td>
+
+
+                            </tr>
+                            <tr>
+                                <td class="first">Saaja</td>
+                                <td id="payment-receiver" contenteditable="true">Saaja Sallinen</td>
+                                <td rowspan="2" colspan="3" id="bill-name" class="noborder-bottom" contenteditable="true">Laskun nimi<br><br><br></td>
+
+
+                            </tr>
+                            <tr>
+                                <td rowspan="2" class="noborder-bottom first">Maksaja</td>
+                                <td rowspan="2" class="noborder"><div class="client-info" contenteditable="true"></div><br></td>
+
+
+                            </tr>
+                            <tr>
+
+                                <td colspan="3">Laskun numero: <span class="bill-id"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="first">Allekirjoitus</td>
+                                <td class="noborder-left"><hr class="underline"></td>
+                                <td>Viitenro</td>
+                                <td colspan="2" id="refnum" class="text-middle"></td>
+
+                            </tr>
+                            <tr>
+                                <td class="first">Tililtä nro</td>
+                                <td></td>
+                                <td>Eräpäivä</td>
+                                <td class="date-pay text-middle"></td>
+                                <td class="total text-middle"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <img id="barcode">
+                </div>
             </footer>
         </div>
         
@@ -144,6 +146,10 @@
             <div>
                 <b>Tallennetut laskut</b>
                 <div id="saved-bills"></div>
+            </div>
+            <br><br>
+            <div>
+                <input type="checkbox" id="show-tilisiirto" checked> Näytä tilisiirtolomake
             </div>
         </div>
         

@@ -97,7 +97,12 @@
         if (htmlElement == undefined || htmlElement.tagName == undefined) return;
         
         if (htmlElement.tagName.toLowerCase() == "input") {
-            return new bn.EInput(htmlElement);
+            if (htmlElement.type == "checkbox") {
+                return new bn.ECheckbox(htmlElement);
+            }
+            else {
+                return new bn.EInput(htmlElement);
+            }
         }
         
         this.el = htmlElement;
@@ -131,6 +136,23 @@
     };
     bn.EInput.prototype.onChange = function(value) {
         this.el.value = value;
+    };
+    
+    bn.ECheckbox = function(htmlElement) {
+        if (htmlElement == undefined) return;
+        this.el = htmlElement;
+        
+        var _this = this;
+        this.el.addEventListener("change", function() {
+            _this.notify();
+        }, false);
+    };
+    bn.ECheckbox.prototype = Object.create(bn.O.prototype);
+    bn.ECheckbox.prototype.notify = function() {
+        this.commitChange(this.el.checked);
+    };
+    bn.ECheckbox.prototype.onChange = function(value) {
+        this.el.checked = (value && value != false && value != "false");
     };
     
     win["bn"] = bn.Link;
