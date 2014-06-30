@@ -82,6 +82,8 @@
     var barcodeEl = doc.querySelector("#barcode");
     
     
+    var jobRows = [];
+    
     var JobRow = function(rowEl) { 
         this.totalBnO = new bn.O();
         this.totalBnO.isJobBn = true;
@@ -116,6 +118,7 @@
     JobRow.newJobRowEl = doc.querySelector("#new-job-row");
     JobRow.prototype.remove = function() {
         this.el.remove();
+        this.deleted = true;
     };
     JobRow.prototype.delEvent = function(evt) {
         evt.preventDefault();
@@ -124,7 +127,10 @@
         }
     };
     JobRow.prototype.addDelEvent = function() {
-        this.el.addEventListener("contextmenu", this.delEvent, false);
+        var _this = this;
+        this.el.addEventListener("contextmenu", function(evt) {
+            _this.delEvent(evt);
+        }, false);
     };
     JobRow.prototype.count = function() {
         var alve = elVal(this.countEl) * elVal(this.apriceEl) * (elVal(this.alvpEl)/100);
@@ -173,7 +179,6 @@
     var isUpdating = false;
     
     var date;
-    var jobRows = [];
     var totalBn;
     var totalElBn = new bn(".total");
 
@@ -222,6 +227,12 @@
                 BillMachine.notification(e, BillMachine.notification.TYPE_WARN);
             }
         }
+    };
+    
+    var dateChangeBnListener = new bn(dateEl);
+    dateChangeBnListener.onChange = function() {
+        date = stringToDate(text(dateEl));
+        dateBn.notify();
     };
     
     var calcRefNum = function(billId) {
@@ -274,7 +285,7 @@
         totalElBn.setValue(des2str(total));
     };
 
-    var fillDataTodays = function() {
+    var fillDateTodays = function() {
         var dateTodays = doc.querySelectorAll(".date-today");
         var dateToday = dateToString(date);
         for (var i=0, l=dateTodays.length; i<l; ++i) {
@@ -306,7 +317,7 @@
 
         refnumBn.setValue(text(billIdEl));
     
-        fillDataTodays();
+        fillDateTodays();
 
         datesToPayElBnE.notify();
         accountNumberBn.notify();
@@ -330,7 +341,9 @@
     BillMachine.getJobRowsJSON = function() {
         var arr = [];
         for (var i=0, l=jobRows.length; i<l; ++i) {
-            arr.push(jobRows[i].toJSON());
+            if (!jobRows[i].deleted) {
+                arr.push(jobRows[i].toJSON());
+            }
         }
         return arr;
     };
