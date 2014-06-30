@@ -5,6 +5,7 @@
         <title>Laskutuskone</title>
         <link rel="stylesheet" href="stamp.css">
         <link rel="stylesheet" href="styles.css">
+        <script src="lib/pankkiviivakoodi/dist/pankkiviivakoodi-all.js"></script>
     </head>
     <body>
     
@@ -20,7 +21,7 @@
                             Hankintatie 12
                             00100 Helsinki
                         </td>
-                        <td>Päiväys</td><td class="date-today" id="date"></td>
+                        <td>Päiväys</td><td class="date-today" id="date" contenteditable="true"></td>
                     </tr>
                     <tr>
                         <td>Eräpäivä</td><td id="date-pay" class="date-pay"></td>
@@ -152,6 +153,8 @@
             </div>
         </div>
         
-        <script src="laskutuskone.min.js"></script>
+        <script src="bn.js"></script>
+        <script src="billmachine.js"></script>
+        <script src="controlpanel.js"></script>
     </body>
 </html>
