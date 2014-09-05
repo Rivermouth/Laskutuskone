@@ -1,0 +1,28 @@
+{
+	"name" : "Laskutuskone",
+	"version" : "0.9",
+	"manifest_version" : 2,
+	"description" : "Laskutuskoneella luot suomalaisten laskustandardien mukaisia
+		laskuja. Laskutuskone tulostaa halutessa tilisiirtolomakkeen suomalaisella
+		pankkiviivakoodilla, mikä helpottaa ja nopeuttaa asiakkaita laskujen maksussa.",
+	"container" : "GOOGLE_DRIVE",
+	"api_console_project_id" : "laskutuskone",
+	"gdrive_mime_types": {
+		"http://drive.google.com/intents/opendrivedoc": [
+			{
+				"type": ["application/vnd.google.drive.ext-type.rlk"],
+				"href": "http://laskutuskone.appspot.com",
+				"title" : "Open",
+				"disposition" : "window"
+			}
+		]
+	},
+	"icons": {
+		"128": "icon128.png"
+	},
+	"app" : {
+		"launch" : {
+			"web_url" : "http://laskutuskone.appspot.com"
+		}
+	}
+}
