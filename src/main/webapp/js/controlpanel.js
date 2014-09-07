@@ -67,7 +67,7 @@
     var openNew = function() {
         if (hasChangesCheck()) {
             location.reload();
-            setDriveFolderId(null);
+            setDriveFile(null);
         }
     };
 
@@ -88,7 +88,7 @@
         });
         request.execute(function(file) {
             Drive.downloadFile(file, function(resp) {
-                setDriveFolderId(file.parents[0].id);
+                setDriveFile(file);
                 open(file.title.split(".")[0], JSON.parse(resp));
             });
         });
@@ -126,8 +126,8 @@
         var blob = new Blob([data], {type: BillMachine.MIME_TYPE});
         blob.fileName = name + ".rlk";
 
-        Drive.insertFile(blob, BillMachine.folderId, null, function(file) {
-            setDriveFolderId(file.parents[0].id)
+        Drive.insertFile(blob, BillMachine.folderId, BillMachine.fileId, function(file) {
+            setDriveFile(file);
             saveNotifySuccess(SAVED_TO_DRIVE);
             if (callback) callback(true);
         });
@@ -196,6 +196,17 @@
             BillMachine.folderId = undefined;
             showInDriveEl.href = "#";
             bn.addClass(showInDriveEl, "disabled");
+        }
+    };
+
+    var setDriveFile = function(file) {
+        if (!file) {
+            setDriveFolderId(null);
+            BillMachine.fileId = null;
+        }
+        else {
+            setDriveFolderId(file.parents[0].id);
+            BillMachine.fileId = file.id;
         }
     };
 

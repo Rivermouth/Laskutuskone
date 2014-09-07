@@ -7,9 +7,9 @@ var Drive = {};
  * @param {Function} callback Function to call when the request is complete.
  */
 Drive.insertFile = function(fileData, parentFolderId, fileId, callback) {
-  const boundary = '-------314159265358979323846';
-  const delimiter = "\r\n--" + boundary + "\r\n";
-  const close_delim = "\r\n--" + boundary + "--";
+  var boundary = '-------314159265358979323846';
+  var delimiter = "\r\n--" + boundary + "\r\n";
+  var close_delim = "\r\n--" + boundary + "--";
 
   var reader = new FileReader();
   reader.readAsBinaryString(fileData);
@@ -25,9 +25,6 @@ Drive.insertFile = function(fileData, parentFolderId, fileId, callback) {
             "id": parentFolderId
         }];
     }
-    if (fileId) {
-        metadata["fileId"] = fileId;
-    }
 
     var base64Data = btoa(reader.result);
     var multipartRequestBody =
@@ -42,8 +39,8 @@ Drive.insertFile = function(fileData, parentFolderId, fileId, callback) {
         close_delim;
 
     var request = gapi.client.request({
-        'path': '/upload/drive/v2/files',
-        'method': 'POST',
+        'path': '/upload/drive/v2/files/' + (fileId ? fileId : ''),
+        'method': (fileId ? 'PUT' : 'POST'),
         'params': {'uploadType': 'multipart'},
         'headers': {
           'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'

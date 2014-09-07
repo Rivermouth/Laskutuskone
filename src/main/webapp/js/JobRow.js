@@ -10,12 +10,6 @@
         JobRow.newJobRowEl.parentElement.insertBefore(this.el, JobRow.newJobRowEl);
         this.addDelEvent();
 
-        var _this = this;
-        this.el.addEventListener("contextmenu", function() {
-            _this.totalBnO.remove();
-            this.remove();
-        }, false);
-
         this.descEl = this.el.querySelector(".desc");
         this.countEl = this.el.querySelector(".count");
         this.countUnitEl = this.el.querySelector(".count-unit");
@@ -30,6 +24,7 @@
 
         this.addBind();
     };
+    JobRow.CONFIRM_DELETE = "Haluatko varmasti poistaa kyseisen kohteen?";
     JobRow.newJobRowEl = doc.querySelector("#new-job-row");
     JobRow.prototype.remove = function() {
         this.el.remove();
@@ -37,7 +32,8 @@
     };
     JobRow.prototype.delEvent = function(evt) {
         evt.preventDefault();
-        if (confirm(CONFIRM_DELETE)) {
+        if (confirm(JobRow.CONFIRM_DELETE)) {
+            this.totalBnO.remove();
             this.remove();
         }
     };

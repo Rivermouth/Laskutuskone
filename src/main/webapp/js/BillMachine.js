@@ -4,10 +4,6 @@
 
 (function(win, doc, JobRow) {
 
-    /* Strings */
-    var CONFIRM_DELETE      = "Haluatko varmasti poistaa kyseisen kohteen?"
-    ;
-
     /* Elements */
     var billerNameEl = doc.querySelector("#biller-name");
     var paymentReceiverEl = doc.querySelector("#payment-receiver");
@@ -305,6 +301,7 @@
     BillMachine.notification.TYPE_WARN = "warn";
     BillMachine.MIME_TYPE = "application/vnd.google.drive.ext-type.rlk";
     BillMachine.folderId = undefined;
+    BillMachine.fileId = undefined;
 
     bn.BillMachine = BillMachine;
 

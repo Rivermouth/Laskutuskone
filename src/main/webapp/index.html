@@ -3,12 +3,12 @@
     <head>
         <meta charset="utf-8">
         <title>Laskutuskone</title>
-        <link rel="stylesheet" href="stamp.css">
-        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="css/stamp.css">
+        <link rel="stylesheet" href="css/styles.css">
 
         <script src="https://gapps-libs.appspot.com/js/auth.js"></script>
-        <script src="lib/pankkiviivakoodi/dist/pankkiviivakoodi-all.js"></script>
-        <script src="js/bn.js"></script>
+        <script src="lib-ext/pankkiviivakoodi/dist/pankkiviivakoodi-all.js"></script>
+        <script src="lib/bn.js"></script>
         <script src="js/helpers.js"></script>
 
         <script src="lib/GoogleAPI/Drive.js"></script>
@@ -164,17 +164,17 @@
                 <button class="w-100p" id="open-from-drive">
                     <img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Avaa Drivestä"> Avaa
                 </button>
+                <br><br>
             </div>
-            <br>
             <button class="w-100p" onclick="window.print();">
                 <img src="img/icomoon/Icons/PNG/16px/print.png" alt="Tulosta"> Tulosta
             </button>
-            <br>
+            <br><br>
             <div class="hide-when-logged-in">
                 <b>Tallennetut laskut</b>
                 <div id="saved-bills"></div>
+                <br><br>
             </div>
-            <br><br>
             <div>
                 <label>
                     <input type="checkbox" id="show-tilisiirto" checked>
@@ -185,7 +185,11 @@
             <a href="#" id="toggle-additional-settings">Lisäasetukset</a>
             <div id="additional-settings">
                 <div class="inner">
-                    <a href="#" id="show-in-drive" class="disabled">Näytä Drivessä</a>
+                    <div class="hide-when-not-logged-in">
+                        <a href="#" target="_blank" id="show-in-drive" class="disabled">Näytä Drivessä</a>
+                        <br>
+                        <a href="https://security.google.com/settings/security/permissions" target="_blank">Tilin käyttöoikeudet</a>
+                    </div>
                 </div>
             </div>
         </div>
