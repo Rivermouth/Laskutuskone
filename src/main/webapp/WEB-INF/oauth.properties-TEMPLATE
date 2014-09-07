@@ -1,0 +1,8 @@
+# Rename this file to "oauth.properties"
+# Fill correct values
+#
+# Client ID and secret. They can be found in the APIs console.
+clientId=
+clientSecret=
+# API scopes. Space separated.
+scopes=
