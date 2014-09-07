@@ -1,5 +1,8 @@
+# Rename this file to "oauth.properties"
+# Fill correct values
+#
 # Client ID and secret. They can be found in the APIs console.
-clientId=1098904568151-0r4r5j6qjl6435apvthefpqs3a9m8oah.apps.googleusercontent.com
-clientSecret=l-u2Uvnp2_W06Ne4X2RGKr58
+clientId=
+clientSecret=
 # API scopes. Space separated.
-scopes=https://www.googleapis.com/auth/drive.install https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/plus.profile.emails.read https://www.googleapis.com/auth/plus.login
+scopes=
