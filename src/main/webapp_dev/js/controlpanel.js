@@ -14,7 +14,8 @@
 
         NO_SAVE_FILE_NAME_NOTIF     = "Anna tiedostonimi.",
         CONFIRM_LOST_UNSAVED        = "Tallentamattomat tiedot menetetään. Haluatko jatkaa?",
-        CONFIRM_BILL_DELETE         = "Haluatko varmasti poistaa tallennetun laskun?"
+        CONFIRM_BILL_DELETE         = "Haluatko varmasti poistaa tallennetun laskun?",
+        GIVE_FILE_NAME              = "Anna tiedostonimi"
     ;
 
     /* Elements */
@@ -24,6 +25,7 @@
     var saveNameInputEl = doc.querySelector("#save-name");
     var saveButtonEl = doc.querySelector("#save");
     var saveToDriveButtonEl = doc.querySelector("#save-to-drive");
+    var saveToDriveAsButtonEl = doc.querySelector("#save-to-drive-as");
     var loadButtonEl = doc.querySelector("#load");
     var newButtonEl = doc.querySelector("#new");
     var openFromDriveEl = doc.querySelector("#open-from-drive");
@@ -62,13 +64,14 @@
             localStorage.removeItem(name);
             loadSavedList();
             notification(DELETED);
-        };
+        }
     };
 
     var openNew = function() {
         if (hasChangesCheck()) {
-            location.reload();
             setDriveFile(null);
+            location.search = "";
+            location.reload();
         }
     };
 
@@ -145,11 +148,11 @@
         saveNotifySuccess();
     };
 
-    var prevSavedSel = undefined;
+    var prevSavedSel;
     var addOpenSavedOnClickEvent = function(el) {
         el.addEventListener("click", function() {
             if (openSaved(this.textContent)) {
-                if (prevSavedSel != undefined) {
+                if (prevSavedSel !== undefined) {
                     prevSavedSel.className = prevSavedSel.className.replace(" selected", "");
                 }
                 prevSavedSel = this;
@@ -177,7 +180,7 @@
             d.appendChild(el);
             addOpenSavedOnClickEvent(el);
             addDeleteSavedEvent(el);
-        };
+        }
 
         savedBillsEl.innerHTML = "";
         savedBillsEl.appendChild(d);
@@ -223,8 +226,7 @@
         }
     }, false);
 
-    saveToDriveButtonEl.addEventListener("click", function() {
-        var self = this;
+    var saveToDriveClickEvent = function(self, evt) {
         var name = getSaveName();
         if(name) {
             self.disabled = true;
@@ -232,6 +234,20 @@
                 self.disabled = false;
             });
         }
+    };
+
+    saveToDriveButtonEl.addEventListener("click", function(evt) {
+        saveToDriveClickEvent(this, evt);
+    }, false);
+
+    saveToDriveAsButtonEl.addEventListener("click", function(evt) {
+        var newName = prompt(GIVE_FILE_NAME);
+        if (newName === null) return;
+
+        saveNameInputEl.value = newName;
+        setDriveFile(null);
+
+        saveToDriveClickEvent(this, evt);
     }, false);
 
     if (loadButtonEl) loadButtonEl.addEventListener("click", function() {
