@@ -253,25 +253,48 @@
                     bn.removeClass(doc.body, "loading");
                 };
 
-                Gapps.Auth().init({
-                    authButton: document.querySelector("#auth-button"),
-                    scopes: [
-                    "https://www.googleapis.com/auth/drive.install",
-                    "https://www.googleapis.com/auth/drive.file",
-                    // "https://www.googleapis.com/auth/userinfo.email",
-                    // "https://www.googleapis.com/auth/userinfo.profile",
-                    "https://www.googleapis.com/auth/plus.profile.emails.read",
-                    "https://www.googleapis.com/auth/plus.login"
-                    ],
-                    clientId: "1098904568151-0r4r5j6qjl6435apvthefpqs3a9m8oah.apps.googleusercontent.com"
-                }, function(gapiClient) {
-                    if (!gapiClient) {
-                        startApp();
-                        throw "Error loading API";
-                    }
-                    api = gapiClient;
-                    api.load('drive', 'v2', startAppWithGoogle);
-                });
+                var doAuth = function() {
+                    Gapps.Auth().init({
+                        authButton: document.querySelector("#auth-button"),
+                        scopes: [
+                        "https://www.googleapis.com/auth/drive.install",
+                        "https://www.googleapis.com/auth/drive.file",
+                        "https://www.googleapis.com/auth/userinfo.email",
+                        "https://www.googleapis.com/auth/userinfo.profile",
+                        "https://www.googleapis.com/auth/plus.profile.emails.read",
+                        "https://www.googleapis.com/auth/plus.login"
+                        ],
+                        clientId: "1098904568151-0r4r5j6qjl6435apvthefpqs3a9m8oah.apps.googleusercontent.com"
+                    }, function(gapiClient) {
+                        if (!gapiClient) {
+                            if (bn.urlParams.code) {
+                                // If user not authorized, try to change code to access token
+                                bn.getAjax("/oauthcode" + location.search, function(resp) {
+                                    resp = JSON.parse(resp);
+
+                                    if (resp == null || resp.error) {
+                                        startApp();
+                                    }
+                                    else {
+                                        setTimeout(function() {
+                                            doAuth();
+                                        }, 300);
+                                    }
+                                });
+                            }
+                            else {
+                                startApp();
+                                throw "Error loading API";
+                            }
+                        }
+                        else {
+                            api = gapiClient;
+                            api.load('drive', 'v2', startAppWithGoogle);
+                        }
+                    });
+                };
+
+                doAuth();
             })(window, document);
         </script>
 

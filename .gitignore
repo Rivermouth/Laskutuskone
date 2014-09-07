@@ -17,6 +17,7 @@ temp-testng-customsuite.xml
 test-output
 .externalToolBuilders
 *~
+oauth.properties
 
 # Logs
 logs

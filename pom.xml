@@ -45,6 +45,14 @@
             <artifactId>jdo-api</artifactId>
             <version>3.0.1</version>
         </dependency>
+        
+        <dependency>
+			<groupId>com.google.api.client</groupId>
+			<artifactId>google-api-client-googleapis</artifactId>
+			<version>1.4.0-alpha</version>
+		</dependency>
+
+        
 
         <!-- Test Dependencies -->
         <dependency>
