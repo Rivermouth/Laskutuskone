@@ -3,10 +3,9 @@
 	"version" : "0.9.2",
 	"manifest_version" : 2,
 	"description" : "Laskutuskoneella luot suomalaisten laskustandardien mukaisia
-		laskuja. Laskutuskone tulostaa halutessa tilisiirtolomakkeen suomalaisella
-		pankkiviivakoodilla, mikä helpottaa ja nopeuttaa asiakkaita laskujen maksussa.",
+		laskuja, jotka sisältävät tilisiirtolomakkeen ja pankkiviivakoodin.",
 	"container" : "GOOGLE_DRIVE",
-	"api_console_project_id" : "laskutuskone",
+	"api_console_project_id" : "1098904568151",
 	"gdrive_mime_types": {
 		"http://drive.google.com/intents/opendrivedoc": [
 			{
