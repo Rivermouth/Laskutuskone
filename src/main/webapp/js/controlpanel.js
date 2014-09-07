@@ -19,6 +19,7 @@
 
     /* Elements */
     var body = doc.getElementsByTagName("body")[0];
+    var pageEl = doc.querySelector("#page");
     var controlPanel = doc.querySelector("#controls");
     var saveNameInputEl = doc.querySelector("#save-name");
     var saveButtonEl = doc.querySelector("#save");
@@ -126,10 +127,15 @@
         var blob = new Blob([data], {type: BillMachine.MIME_TYPE});
         blob.fileName = name + ".rlk";
 
-        Drive.insertFile(blob, BillMachine.folderId, BillMachine.fileId, function(file) {
-            setDriveFile(file);
-            saveNotifySuccess(SAVED_TO_DRIVE);
-            if (callback) callback(true);
+        html2canvas(pageEl, {
+            onrendered: function(canvas) {
+                console.log(canvas.toDataURL("image/png"));
+                Drive.insertFile(blob, BillMachine.folderId, BillMachine.fileId, canvas.toDataURL("image/png"), function(file) {
+                    setDriveFile(file);
+                    saveNotifySuccess(SAVED_TO_DRIVE);
+                    if (callback) callback(true);
+                });
+            }
         });
     };
 

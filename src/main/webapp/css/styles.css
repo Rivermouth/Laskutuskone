@@ -110,15 +110,15 @@ section                             { padding: 1em 0; }
 .list-item:hover                    { background: #ebebeb; cursor: pointer; }
 .list-item.selected                 { background: #f9f9f9; font-weight: bold; }
 
-#auth-button                        { background-image: url("img/google/White-signin_Medium_base_44dp.png"); padding-top: 34%; background-size: 100%; font-size: 0px; line-height: 0px; }
-#auth-button:hover                  { background-image: url("img/google/White-signin_Medium_hover_44dp.png"); }
-#auth-button:active                 { background-image: url("img/google/White-signin_Medium_press_44dp.png"); }
+#auth-button                        { background-image: url("../img/google/White-signin_Medium_base_44dp.png"); padding-top: 34%; background-size: 100%; font-size: 0px; line-height: 0px; }
+#auth-button:hover                  { background-image: url("../img/google/White-signin_Medium_hover_44dp.png"); }
+#auth-button:active                 { background-image: url("../img/google/White-signin_Medium_press_44dp.png"); }
 
 #logged-in .hide-when-logged-in     { display: none; }
 #not-logged-in .hide-when-not-logged-in { display: none; }
 
 @media screen {
-    body                            { min-width: 990px; background-image: url(img/watermark.png); background-attachment: fixed; background-position-y: -100px; background-position-x: -90px; }
+    body                            { min-width: 990px; background-image: url("../img/watermark.png"); background-attachment: fixed; background-position-y: -100px; background-position-x: -90px; }
     #page:hover *[contenteditable="true"]       { box-shadow: inset 0 0 2px #dbdbdb; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAO0lEQVQYV2NkIAIwElJz+/bt/3gVgRSoqqoyEjQJZBNWRTATYE7BUISuAKdJ6J6Bm4TNBBTr8CkAKQQAPTMXmqBRn6kAAAAASUVORK5CYII=); }
 }
 

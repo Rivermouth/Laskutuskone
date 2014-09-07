@@ -1,12 +1,18 @@
 var Drive = {};
 
+Drive.iconLink = null;
+
+Drive.byte64toWebSafe = function(byte64str) {
+    return byte64str.replace(/\+/g,'-').replace(/\//g,'_'); //.replace(/\=/g,'*');
+};
+
 /**
  * Insert new file.
  *
  * @param {File} fileData File object to read data from.
  * @param {Function} callback Function to call when the request is complete.
  */
-Drive.insertFile = function(fileData, parentFolderId, fileId, callback) {
+Drive.insertFile = function(fileData, parentFolderId, fileId, thumbnailBase64, callback) {
   var boundary = '-------314159265358979323846';
   var delimiter = "\r\n--" + boundary + "\r\n";
   var close_delim = "\r\n--" + boundary + "--";
@@ -24,6 +30,15 @@ Drive.insertFile = function(fileData, parentFolderId, fileId, callback) {
             "kind": "drive#fileLink",
             "id": parentFolderId
         }];
+    }
+    if (thumbnailBase64) {
+        metadata["thumbnail"] = {
+            image: Drive.byte64toWebSafe(thumbnailBase64.substring(thumbnailBase64.indexOf("base64,") + 7)),
+            mimeType: thumbnailBase64.substring(5, thumbnailBase64.indexOf(";"))
+        };
+    }
+    if (Drive.iconLink) {
+        metadata["iconLink"] = Drive.iconLink;
     }
 
     var base64Data = btoa(reader.result);
