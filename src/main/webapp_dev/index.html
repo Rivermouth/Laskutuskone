@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Laskutuskone</title>
+
+        <!-- IE -->
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+        <!-- other browsers -->
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+        <!-- build:css css/laskutuskone.css -->
+        <link rel="stylesheet" href="css/stamp.css">
+        <link rel="stylesheet" href="css/styles.css">
+        <!-- endbuild -->
+
+        <script src="https://gapps-libs.appspot.com/js/auth.js"></script>
+
+        <!-- build:js js/laskutuskone-deps.js -->
+        <script src="lib-ext/pankkiviivakoodi/dist/pankkiviivakoodi-all.js"></script>
+        <script src="lib/bn.js"></script>
+        <script src="js/helpers.js"></script>
+
+        <script src="lib/GoogleAPI/Drive.js"></script>
+        <!-- endbuild -->
+    </head>
+    <body>
+
+        <div id="page" class="a4">
+            <table class="col" id="bill-info-table">
+                <thead class="border-bottom text-bigger">
+                    <tr><td contenteditable="true" id="biller-name">Laskuttaja Oy</td><td>LASKU</td><td></td></tr>
+                </thead>
+                <tbody>
+                    <tr class="padding-top">
+                        <td rowspan="5" id="client-info" class="client-info w-50p" contenteditable="true">Ostaja Oy
+                            Mikko Maksaja
+                            Hankintatie 12
+                            00100 Helsinki
+                        </td>
+                        <td>Päiväys</td><td class="date-today" id="date" contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>Eräpäivä</td><td id="date-pay" class="date-pay"></td>
+                    </tr>
+                    <tr>
+                        <td>Maksuehto</td><td><span contenteditable="true" id="dates-to-pay">14</span><span>&nbsp;päivää netto</span></td>
+                    </tr>
+                    <tr>
+                        <td>Viivästyskorko</td><td contenteditable="true" id="pay-interest">8.0%</td>
+                    </tr>
+                    <tr>
+                        <td>Laskun numero</td><td id="bill-id" class="bill-id" contenteditable="true"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+            <section class="row">
+                <div class="w-60p">
+                    <b>Lisätiedot</b>
+                    <div contenteditable="true" id="additional-info">Lasku 1.2. - 29.2.2014 väliseltä ajalta</div>
+                </div>
+            </section>
+            <section>
+                <table class="w-100p only-first-td-text-left with-x-space" id="jobs-table">
+                    <thead class="with-borders td-no-wrap">
+                        <tr>
+                            <td class="w-40p">Kuvaus</td><td>Määrä</td><td>Yksikkö</td><td>à hinta</td><td>Alv %</td><td>Alv €</td><td>Yhteensä</td>
+                        </tr>
+                    </thead>
+                    <tbody class="with-ver-borders">
+                        <tr id="new-job-row">
+                            <td contenteditable="true" class="desc"></td>
+                            <td contenteditable="true" class="count td-no-wrap"></td>
+                            <td contenteditable="true" class="count-unit td-no-wrap"></td>
+                            <td contenteditable="true" class="aprice td-no-wrap"></td>
+                            <td contenteditable="true" class="alvp td-no-wrap"></td>
+                            <td class="alve td-no-wrap"</td>
+                            <td class="sum td-no-wrap"></td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="without-borders">
+                        <tr class="padding-top"><td></td><td></td><td colspan="4">Veroton hinta yht</td><td id="novat-total"> </td></tr>
+                        <tr><td></td><td></td><td colspan="4">Arvonlisävero yht</td><td id="vat-total"> </td></tr>
+                        <tr class="text-bold"><td></td><td></td><td colspan="4">Yhteensä</td><td id="total" class="total"></td></tr>
+                    </tfoot>
+                </table>
+            </section>
+            <footer>
+                <div contenteditable="true" id="notes">Huomioita</div>
+                <hr class="dashed">
+                <table class="w-100p text-top" id="info">
+                    <tbody>
+                        <td contenteditable="true" id="footer-1">Laskuttaja Oy
+                            Laskutuskatu 9
+                            00100 Helsinki
+                        </td>
+                        <td contenteditable="true" id="footer-2">+358 50 123 1234
+                            email@email.fi
+                            www.laskuttajaoy.fi
+                        </td>
+                        <td contenteditable="true" id="footer-3">Y-tunnus: 1234567-8
+                            Kotipaikka Helsinki
+                        </td>
+                    </tbody>
+                </table>
+                <div id="tilisiirto">
+                    <table class="text-top with-space">
+                        <tbody>
+                            <tr>
+                                <td class="first">Saajan tilinumero</td>
+                                <td>IBAN<div id="account-number" contenteditable="true"></div></td>
+                                <td colspan="3" style="width: 50%;">BIC<div id="account-shortcode" contenteditable="true"></div></td>
+
+
+                            </tr>
+                            <tr>
+                                <td class="first">Saaja</td>
+                                <td id="payment-receiver" contenteditable="true">Saaja Sallinen</td>
+                                <td rowspan="2" colspan="3" id="bill-name" class="noborder-bottom" contenteditable="true">Laskun nimi<br><br><br></td>
+
+
+                            </tr>
+                            <tr>
+                                <td rowspan="2" class="noborder-bottom first">Maksaja</td>
+                                <td rowspan="2" class="noborder"><div class="client-info" contenteditable="true"></div><br></td>
+
+
+                            </tr>
+                            <tr>
+
+                                <td colspan="3">Laskun numero: <span class="bill-id"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="first">Allekirjoitus</td>
+                                <td class="noborder-left"><hr class="underline"></td>
+                                <td>Viitenro</td>
+                                <td colspan="2" id="refnum" class="text-middle"></td>
+
+                            </tr>
+                            <tr>
+                                <td class="first">Tililtä nro</td>
+                                <td></td>
+                                <td>Eräpäivä</td>
+                                <td class="date-pay text-middle"></td>
+                                <td class="total text-middle"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <img id="barcode">
+                </div>
+            </footer>
+        </div>
+
+        <div id="controls">
+            <div class="hide-when-logged-in">
+                <div id="auth-button" class="w-100p">a</div>
+                <br><br>
+            </div>
+            <div>
+                <input type="text" class="w-100p" id="save-name" placeholder="Tiedostonimi">
+                <button class="w-100p hide-when-logged-in" id="save">
+                    <img src="img/icomoon/Icons/PNG/16px/disk.png" alt="Tallenna"> Tallenna
+                </button>
+                <button class="w-100p hide-when-not-logged-in" id="save-to-drive">
+                    <img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Tallenna Driveen"> Tallenna
+                </button>
+            </div>
+            <br>
+            <button class="w-100p" id="new">
+                <img src="img/icomoon/Icons/PNG/16px/file4.png" alt="Uusi tiedosto"> Uusi
+            </button>
+            <br><br>
+            <div class="hide-when-not-logged-in">
+                <button class="w-100p" id="open-from-drive">
+                    <img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Avaa Drivestä"> Avaa
+                </button>
+                <br><br>
+            </div>
+            <button class="w-100p" onclick="window.print();">
+                <img src="img/icomoon/Icons/PNG/16px/print.png" alt="Tulosta"> Tulosta
+            </button>
+            <br><br>
+            <div class="hide-when-logged-in">
+                <b>Tallennetut laskut</b>
+                <div id="saved-bills"></div>
+                <br><br>
+            </div>
+            <div>
+                <label>
+                    <input type="checkbox" id="show-tilisiirto" checked>
+                    Näytä tilisiirtolomake
+                </label>
+            </div>
+            <br><br>
+            <a href="#" id="toggle-additional-settings">Lisäasetukset</a>
+            <div id="additional-settings">
+                <div class="inner">
+                    <div class="hide-when-not-logged-in">
+                        <a href="#" target="_blank" id="show-in-drive" class="disabled">Näytä Drivessä</a>
+                        <br>
+                        <a href="https://security.google.com/settings/security/permissions" target="_blank">Tilin käyttöoikeudet</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            Drive.iconLink = "http://laskutuskone.appspot.com/icon_laskutuskone_16.png";
+
+            (function(win, doc) {
+                bn.addClass(doc.body, "loading");
+
+                var api;
+
+                var handleDriveAction = function() {
+                    if (!bn.urlParams) return false;
+
+                    var stateRaw = bn.urlParams.state;
+                    if (!stateRaw) return false;
+
+                    var state;
+                    state = JSON.parse(decodeURIComponent(stateRaw));
+
+                    switch (state.action.toLowerCase()) {
+                        case "open":
+                            bn.BillMachine.openFromDrive(state.ids[0]);
+                            break;
+                        case "create":
+                            bn.BillMachine.folderId = state.folderId;
+                            break;
+                    }
+                };
+
+                var startAppWithGoogle = function() {
+                    doc.body.id = "logged-in";
+                    bn.BillMachine.init();
+                    handleDriveAction();
+                    bn.removeClass(doc.body, "loading");
+                };
+
+                var startApp = function() {
+                    doc.body.id = "not-logged-in";
+                    bn.BillMachine.init();
+                    bn.BillMachine.loadSavedList();
+                    bn.removeClass(doc.body, "loading");
+                };
+
+                Gapps.Auth().init({
+                    authButton: document.querySelector("#auth-button"),
+                    scopes: [
+                    "https://www.googleapis.com/auth/drive.install",
+                    "https://www.googleapis.com/auth/drive.file",
+                    // "https://www.googleapis.com/auth/userinfo.email",
+                    // "https://www.googleapis.com/auth/userinfo.profile",
+                    "https://www.googleapis.com/auth/plus.profile.emails.read",
+                    "https://www.googleapis.com/auth/plus.login"
+                    ],
+                    clientId: "1098904568151-0r4r5j6qjl6435apvthefpqs3a9m8oah.apps.googleusercontent.com"
+                }, function(gapiClient) {
+                    if (!gapiClient) {
+                        startApp();
+                        throw "Error loading API";
+                    }
+                    api = gapiClient;
+                    api.load('drive', 'v2', startAppWithGoogle);
+                });
+            })(window, document);
+        </script>
+
+        <!-- build:js js/laskutuskone.js -->
+        <script src="js/JobRow.js"></script>
+        <script src="js/BillMachine.js"></script>
+        <script src="js/controlpanel.js"></script>
+
+        <script src="lib-ext/html2canvas.js"></script>
+        <!-- endbuild -->
+    </body>
+</html>

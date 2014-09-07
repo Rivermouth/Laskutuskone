@@ -4,15 +4,6 @@
     <version>1</version>
     <threadsafe>true</threadsafe>
 
-    <public-root>/dist</public-root>
-    <static-files>
-        <include path="dist/**" />
-        <exclude path="**/node_modules/**" />
-    </static-files>
-    <resource-files>
-        <exclude path="**/node_modules/**" />
-    </resource-files>
-
     <system-properties>
         <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
     </system-properties>

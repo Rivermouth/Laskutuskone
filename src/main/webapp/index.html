@@ -9,19 +9,11 @@
         <!-- other browsers -->
         <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
-        <!-- build:css css/laskutuskone.css -->
-        <link rel="stylesheet" href="css/stamp.css">
-        <link rel="stylesheet" href="css/styles.css">
-        <!-- endbuild -->
+        <link rel="stylesheet" href="css/laskutuskone.css">
 
         <script src="https://gapps-libs.appspot.com/js/auth.js"></script>
-        <!-- build:js laskutuskone-deps.js -->
-        <script src="lib-ext/pankkiviivakoodi/dist/pankkiviivakoodi-all.js"></script>
-        <script src="lib/bn.js"></script>
-        <script src="js/helpers.js"></script>
 
-        <script src="lib/GoogleAPI/Drive.js"></script>
-        <!-- endbuild -->
+        <script src="js/laskutuskone-deps.js"></script>
     </head>
     <body>
 
@@ -206,7 +198,7 @@
 
         <script>
             Drive.iconLink = "http://laskutuskone.appspot.com/icon_laskutuskone_16.png";
-            
+
             (function(win, doc) {
                 bn.addClass(doc.body, "loading");
 
@@ -267,12 +259,6 @@
             })(window, document);
         </script>
 
-        <!-- build:js laskutuskone.js -->
-        <script src="js/JobRow.js"></script>
-        <script src="js/BillMachine.js"></script>
-        <script src="js/controlpanel.js"></script>
-
-        <script src="lib-ext/html2canvas.js"></script>
-        <!-- endbuild -->
+        <script src="js/laskutuskone.js"></script>
     </body>
 </html>
