@@ -416,7 +416,9 @@
         NO_SAVE_FILE_NAME_NOTIF     = "Anna tiedostonimi.",
         CONFIRM_LOST_UNSAVED        = "Tallentamattomat tiedot menetetään. Haluatko jatkaa?",
         CONFIRM_BILL_DELETE         = "Haluatko varmasti poistaa tallennetun laskun?",
-        GIVE_FILE_NAME              = "Anna tiedostonimi"
+        GIVE_FILE_NAME              = "Anna tiedostonimi",
+
+        GIVE_FILE_GROUP_NAME        = "Anna ryhmän nimi"
     ;
 
     /* Elements */
@@ -436,6 +438,8 @@
     var toggleAdditionalSettingsEl = doc.querySelector("#toggle-additional-settings");
     var additionalSettingsEl = doc.querySelector("#additional-settings");
     var showInDriveEl = doc.querySelector("#show-in-drive");
+    var fileGroupsEl = doc.querySelector("#file-groups");
+    var newFileGroupEl = doc.querySelector("#new-file-group");
 
     var notification = function(msg, type) {
         BillMachine.notification(msg, type);
@@ -516,6 +520,10 @@
     var saveNotifySuccess = function(text) {
         setHasChangesFalse();
         notification(text || SAVED);
+    };
+
+    var saveToDatastore = function(data) {
+
     };
 
     var saveToDrive = function(name, callback) {
@@ -620,13 +628,6 @@
         }
     };
 
-    saveButtonEl.addEventListener("click", function() {
-        var name = getSaveName();
-        if(name) {
-            saveToLocal(name);
-        }
-    }, false);
-
     var saveToDriveClickEvent = function(self, evt) {
         var name = getSaveName();
         if(name) {
@@ -636,6 +637,56 @@
             });
         }
     };
+
+    var FileGroup = {
+        listEl: doc.querySelector("#file-groups-list")
+    };
+    FileGroup.url = window.location.href.replace("8000", "8080") + "filegroup";
+    FileGroup.save = function(id, name) {
+        var params = [];
+        if (id !== null) params.push("id=" + id);
+        params.push("name=" + name);
+        bn.postAjax(FileGroup.url + "?" + params.join("&"), function(resp) {
+            console.log(resp);
+        });
+    };
+    FileGroup.load = function(id) {
+        bn.getAjax(FileGroup.url + "?id=" + id, function(resp) {
+        });
+    };
+    FileGroup.loadList = function(callback) {
+        bn.getAjax(FileGroup.url, function(resp) {
+            callback(JSON.parse(resp));
+        });
+    };
+    FileGroup.renderList = function() {
+        FileGroup.listEl.innerHTML = "";
+        FileGroup.loadList(function(groups) {
+            var d = doc.createDocumentFragment();
+            for (var i = 0, l = groups.length; i < l; ++i) {
+                var group = groups[i];
+                var option = doc.createElement("option");
+                option.textContent = group.name;
+                option.name = group.id;
+            }
+            FileGroup.listEl.appendChild(d);
+        });
+    };
+    FileGroup.createNew = function() {
+        var newName = prompt(GIVE_FILE_GROUP_NAME);
+        if (newName !== null) {
+            FileGroup.save(newName);
+        }
+    };
+
+
+    /* Event listeners */
+    saveButtonEl.addEventListener("click", function() {
+        var name = getSaveName();
+        if(name) {
+            saveToLocal(name);
+        }
+    }, false);
 
     saveToDriveButtonEl.addEventListener("click", function(evt) {
         saveToDriveClickEvent(this, evt);
@@ -665,6 +716,19 @@
     openFromDriveEl.addEventListener("click", function() {
         openSavedFromDrive();
     });
+
+    fileGroupsEl.addEventListener("change", function(evt) {
+        var selectedOption = this[this.selectedIndex];
+        switch (selectedOption.name) {
+            default:
+                if (selectedOption.id === newFileGroupEl.id) {
+                    FileGroup.createNew();
+                }
+        }
+    }, false);
+
+    /* END Event listeners */
+
 
     var showTilisiirtoBn = new bn(showTilisiirtoEl);
     showTilisiirtoBn.onChange = function(value) {

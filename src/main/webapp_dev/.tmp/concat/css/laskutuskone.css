@@ -264,6 +264,8 @@ hr.dashed                           { border-bottom-style: dashed; }
 
 .without-borders td                 { border: 0!important; }
 
+.block                              { margin-bottom: 1.5em; }
+
 table thead                         { font-weight: bold; }
 section                             { padding: 1em 0; }
 

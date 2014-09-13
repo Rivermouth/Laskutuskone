@@ -1,6 +1,6 @@
 module.exports = function(grunt) {
 
-    var destFolder = '../webapp/';
+    var destFolder = '../webapp/www/';
 
     // Project configuration.
     grunt.initConfig({
