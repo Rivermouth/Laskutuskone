@@ -139,7 +139,10 @@ Drive.openPicker = function(mimeTypes, callback, params) {
 
     // A simple callback implementation.
     function pickerCallback(data) {
-      if (data.action == google.picker.Action.PICKED) {
+      if (data.action == google.picker.Action.CANCEL) {
+          if (callback) callback(false);
+      }
+      else if (data.action == google.picker.Action.PICKED) {
         console.log(data);
         var fileId = data.docs[0].id;
         if (callback) callback(data.docs[0]);

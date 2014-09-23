@@ -160,9 +160,7 @@
 
     BillMachine.initPage = function() {
         date = new Date();
-
         totalBn = new bn(totalBnListener);
-
         deleteAllJobRows();
     };
     BillMachine.update = function() {
@@ -184,6 +182,7 @@
     BillMachine.init = function() {
         isUpdating = true;
         BillMachine.initPage();
+        BillMachine.loadFromJSON(BillMachine.getDefaultJSON());
         BillMachine.update();
         isUpdating = false;
     };
@@ -210,6 +209,32 @@
             addJobRow().fromJSON(json[i]);
         }
     };
+
+    BillMachine.getDefaultJSON = function() {
+        return {
+            "biller_name":"Laskuttaja Oy",
+            "payment_receiver":"Saaja Sallinen",
+            "bill_name":"Laskun nimi",
+            "bill_id":"",
+            "ref_num":"",
+            "date":bn.dateToString(date),
+            "date_pay":"",
+            "days_to_pay":"14",
+            "pay_interest":"8.0%",
+            "client":"Ostaja Oy\nMikko Maksaja\nHankintatie 12\n00100 Helsinki",
+            "additional_info":"Lasku 1.2. - 29.2.2014 väliseltä ajalta",
+            "no_vat_total":"0.00",
+            "vat_total":"0.00",
+            "total":"0.00",
+            "account_number":"",
+            "account_shortcode":"",
+            "job_rows":[],
+            "footer1":"Laskuttaja Oy\nLaskutuskatu 9\n00100 Helsinki",
+            "footer2":"+358 50 123 1234\nemail@email.fi\nwww.laskuttajaoy.fi",
+            "footer3":"Y-tunnus: 1234567-8\nKotipaikka Helsinki",
+            "notes":"Huomioita"
+        };
+   };
 
     BillMachine.getJSON = function() {
         return {

@@ -12,19 +12,19 @@
         DELETED         = "Poistettu",
         NEW             = "Uusi",
 
-        NO_SAVE_FILE_NAME_NOTIF     = "Anna tiedostonimi.",
+        NO_SAVE_FILE_NAME_NOTIF     = "Anna tiedostonimi:",
         CONFIRM_LOST_UNSAVED        = "Tallentamattomat tiedot menetetään. Haluatko jatkaa?",
         CONFIRM_BILL_DELETE         = "Haluatko varmasti poistaa tallennetun laskun?",
-        GIVE_FILE_NAME              = "Anna tiedostonimi",
+        GIVE_FILE_NAME              = "Anna tiedostonimi:",
 
-        GIVE_FILE_GROUP_NAME        = "Anna ryhmän nimi"
+        GIVE_FILE_GROUP_NAME        = "Anna ryhmän nimi:"
     ;
 
     /* Elements */
     var body = doc.getElementsByTagName("body")[0];
     var pageEl = doc.querySelector("#page");
     var controlPanel = doc.querySelector("#controls");
-    var saveNameInputEl = doc.querySelector("#save-name");
+    var saveNameEl = doc.querySelector("#save-name");
     var saveButtonEl = doc.querySelector("#save");
     var saveToDriveButtonEl = doc.querySelector("#save-to-drive");
     var saveToDriveAsButtonEl = doc.querySelector("#save-to-drive-as");
@@ -39,6 +39,12 @@
     var showInDriveEl = doc.querySelector("#show-in-drive");
     var fileGroupsEl = doc.querySelector("#file-groups");
     var newFileGroupEl = doc.querySelector("#new-file-group");
+
+    var documentTitleBnO = new bn.O();
+    documentTitleBnO.onChange = function(value) {
+        document.title = (value.length > 0 ? value : "Laskutuskone");
+    };
+    var fileNameBn = new bn(documentTitleBnO, ".file-name");
 
     var notification = function(msg, type) {
         BillMachine.notification(msg, type);
@@ -81,7 +87,7 @@
 
     var open = function(name, json) {
         BillMachine.loadFromJSON(json);
-        saveNameInputEl.value = name;
+        fileNameBn.setValue(name);
         setHasChangesFalse();
         notification(LOADED);
     };
@@ -104,6 +110,7 @@
 
     var openSavedFromDriveWithPicker = function() {
         Drive.openPicker(BillMachine.MIME_TYPE, function(file) {
+            if (!file) return false;
             openSavedFromDrive(file.id);
         }, false);
     };
@@ -128,6 +135,10 @@
     var saveToDrive = function(name, callback) {
         if (!BillMachine.folderId) {
             Drive.openFolderPicker(function(resp) {
+                if (!resp && callback) {
+                    callback(false);
+                    return;
+                }
                 setDriveFolderId(resp.id);
                 saveToDrive(name, callback);
             });
@@ -140,13 +151,13 @@
 
         html2canvas(pageEl, {
             onrendered: function(canvas) {
-                console.log(canvas.toDataURL("image/png"));
                 Drive.insertFile(blob, BillMachine.folderId, BillMachine.fileId, canvas.toDataURL("image/png"), function(file) {
                     setDriveFile(file);
                     saveNotifySuccess(SAVED_TO_DRIVE);
                     if (callback) callback(true);
                 });
-            }
+            },
+            background: "#fff"
         });
     };
 
@@ -195,10 +206,13 @@
     };
 
     var getSaveName = function() {
-        var name = saveNameInputEl.value;
-        if (name <= 0) {
-            alert(NO_SAVE_FILE_NAME_NOTIF);
-            return false;
+        var name = fileNameBn.getValue();
+        if (name === undefined || name <= 0) {
+            name = prompt(NO_SAVE_FILE_NAME_NOTIF);
+            if (name) {
+                return name;
+            }
+            else return false;
         }
         return name;
     };
@@ -231,8 +245,11 @@
         var name = getSaveName();
         if(name) {
             self.disabled = true;
-            saveToDrive(name, function() {
+            saveToDrive(name, function(resp) {
                 self.disabled = false;
+                if (resp) {
+                    fileNameBn.setValue(name);
+                }
             });
         }
     };
@@ -292,10 +309,7 @@
     }, false);
 
     saveToDriveAsButtonEl.addEventListener("click", function(evt) {
-        var newName = prompt(GIVE_FILE_NAME);
-        if (newName === null) return;
-
-        saveNameInputEl.value = newName;
+        fileNameBn.setValue(null);
         setDriveFile(null);
 
         saveToDriveClickEvent(this, evt);
