@@ -37,8 +37,6 @@
     var toggleAdditionalSettingsEl = doc.querySelector("#toggle-additional-settings");
     var additionalSettingsEl = doc.querySelector("#additional-settings");
     var showInDriveEl = doc.querySelector("#show-in-drive");
-    var fileGroupsEl = doc.querySelector("#file-groups");
-    var newFileGroupEl = doc.querySelector("#new-file-group");
 
     var documentTitleBnO = new bn.O();
     documentTitleBnO.onChange = function(value) {
@@ -255,7 +253,8 @@
     };
 
     var FileGroup = {
-        listEl: doc.querySelector("#file-groups-list")
+        el: doc.querySelector("#file-groups"),
+        newOption: undefined
     };
     FileGroup.url = window.location.href.replace("8000", "8080") + "filegroup";
     FileGroup.save = function(id, name) {
@@ -275,17 +274,34 @@
             callback(JSON.parse(resp));
         });
     };
+    FileGroup.createOptionElement = function(text, name) {
+        var option = doc.createElement("option");
+        option.textContent = text;
+        option.name = name;
+        return option;
+    };
     FileGroup.renderList = function() {
-        FileGroup.listEl.innerHTML = "";
+        FileGroup.el.innerHTML = "";
         FileGroup.loadList(function(groups) {
             var d = doc.createDocumentFragment();
+
+            var firstOptionEl = FileGroup.createOptionElement("Valitse ryhmä", "");
+            firstOptionEl.disabled = true;
+            firstOptionEl.selected = true;
+            d.appendChild(firstOptionEl);
+
             for (var i = 0, l = groups.length; i < l; ++i) {
                 var group = groups[i];
-                var option = doc.createElement("option");
-                option.textContent = group.name;
-                option.name = group.id;
+                d.appendChild(FileGroup.createOptionElement(group.name, group.id));
             }
+
+            var newOptionEl = FileGroup.createOptionElement("Uusi...", "");
+            newOptionEl.id = "new-file-group";
+            d.appendChild(newOptionEl);
+            FileGroup.newOption = newOptionEl;
+
             FileGroup.listEl.appendChild(d);
+            FileGroup.addListeners();
         });
     };
     FileGroup.createNew = function() {
@@ -294,6 +310,19 @@
             FileGroup.save(newName);
         }
     };
+    FileGroup.addListeners = function() {
+        FileGroup.el.addEventListener("change", function(evt) {
+            var selectedOption = this[this.selectedIndex];
+            switch (selectedOption.name) {
+                default:
+                    if (selectedOption.id === FileGroup.newOption.id) {
+                        FileGroup.createNew();
+                    }
+            }
+        }, false);
+    };
+
+    FileGroup.renderList();
 
 
     /* Event listeners */
@@ -329,16 +358,6 @@
     openFromDriveEl.addEventListener("click", function() {
         openSavedFromDrive();
     });
-
-    fileGroupsEl.addEventListener("change", function(evt) {
-        var selectedOption = this[this.selectedIndex];
-        switch (selectedOption.name) {
-            default:
-                if (selectedOption.id === newFileGroupEl.id) {
-                    FileGroup.createNew();
-                }
-        }
-    }, false);
 
     /* END Event listeners */
 
