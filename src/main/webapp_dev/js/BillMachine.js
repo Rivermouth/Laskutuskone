@@ -312,10 +312,7 @@
         };
     };
 
-    BillMachine.loadFromJSON = function(json) {
-        isUpdating = true;
-        BillMachine.initPage();
-		
+	BillMachine.setJSONData = function(json) {
 		logoBn.setValue(json.logo_base64);
 		
         bn.text(billerNameEl, json.biller_name);
@@ -341,7 +338,14 @@
         bn.text(footer3El, json.footer3);
 
         bn.text(notesEl, json.notes);
-
+	};
+	
+    BillMachine.loadFromJSON = function(json) {
+        isUpdating = true;
+        BillMachine.initPage();
+		
+		BillMachine.setJSONData(json);
+		
         BillMachine.update();
         isUpdating = false;
         barcodeBnListener.onChange();

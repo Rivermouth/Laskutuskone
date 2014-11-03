@@ -167,7 +167,7 @@
                 <div id="auth-button" class="w-100p">a</div>
             </div>
 
-            <input type="text" class="w-100p file-name" id="save-name" placeholder="Tiedostonimi">
+            <input type="text" class="w-100p file-name hide-when-not-logged-in" id="save-name" placeholder="Tiedostonimi">
 
             <!-- Save/new/open -->
             <!-- save -->
@@ -175,14 +175,14 @@
                 <button class="w-100p hide-when-logged-in" id="save">
                     <img src="img/icomoon/Icons/PNG/16px/disk.png" alt="Tallenna"> Tallenna
                 </button>
-                <div class="hide-when-not-logged-in">
-                    <button class="w-100p" id="save-to-drive">
-                        <img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Tallenna Driveen"> Tallenna
-                    </button>
-                    <button class="w-100p hide-when-not-logged-in" id="save-to-drive-as">
-                        <img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Tallenna Driveen uutena tiedostona"> Tallenna nimellä
-                    </button>
-                </div>
+			</div>
+			<div class="block hide-when-not-logged-in">
+				<button class="w-100p" id="save-to-drive">
+					<img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Tallenna Driveen"> Tallenna
+				</button>
+				<button class="w-100p hide-when-not-logged-in" id="save-to-drive-as">
+					<img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Tallenna Driveen uutena tiedostona"> Tallenna nimellä
+				</button>
             </div>
 
             <!-- new -->
@@ -198,6 +198,11 @@
                     <img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Avaa Drivestä"> Avaa
                 </button>
             </div>
+            <div class="hide-when-logged-in block">
+                <button class="w-100p" id="open">
+                    <img src="img/icomoon/Icons/PNG/16px/disk.png" alt="Avaa"> Avaa
+                </button>
+            </div>
 
 
             <!-- Print -->
@@ -210,6 +215,7 @@
             <!-- Saved files (local) -->
             <div class="hide-when-logged-in block">
                 <b>Tallennetut laskut</b>
+				<i><small>Tämä toiminto on vanhentunut. Voit edelleen avata tallentamasi tiedostot, mutta jatkossa tiedostot tallennetaan joko tietokoneen muistiin tai Google Driveen.</small></i>
                 <div id="saved-bills"></div>
             </div>
 
@@ -233,6 +239,14 @@
                 </div>
             </div>
         </div>
+
+        <!-- build:js js/laskutuskone.js -->
+        <script src="js/JobRow.js"></script>
+        <script src="js/BillMachine.js"></script>
+        <script src="js/controlpanel.js"></script>
+
+        <script src="lib-ext/html2canvas.js"></script>
+        <!-- endbuild -->
 
         <script>
             Drive.iconLink = "http://laskutuskone.appspot.com/icon_laskutuskone_16.png";
@@ -316,16 +330,10 @@
                     });
                 };
 
-                doAuth();
+                startApp();
+				//doAuth();
             })(window, document);
         </script>
-
-        <!-- build:js js/laskutuskone.js -->
-        <script src="js/JobRow.js"></script>
-        <script src="js/BillMachine.js"></script>
-        <script src="js/controlpanel.js"></script>
-
-        <script src="lib-ext/html2canvas.js"></script>
-        <!-- endbuild -->
+		
     </body>
 </html>

@@ -14,6 +14,8 @@
         LOADED          = "Ladattu",
         DELETED         = "Poistettu",
         NEW             = "Uusi",
+		
+		DEFAULT_FILE_NAME 			= "lasku",
 
         NO_SAVE_FILE_NAME_NOTIF     = "Anna tiedostonimi:",
         CONFIRM_LOST_UNSAVED        = "Tallentamattomat tiedot menetetään. Haluatko jatkaa?",
@@ -31,6 +33,7 @@
     var saveButtonEl = doc.querySelector("#save");
     var saveToDriveButtonEl = doc.querySelector("#save-to-drive");
     var saveToDriveAsButtonEl = doc.querySelector("#save-to-drive-as");
+    var openButtonEl = doc.querySelector("#open");
     var loadButtonEl = doc.querySelector("#load");
     var newButtonEl = doc.querySelector("#new");
     var openFromDriveEl = doc.querySelector("#open-from-drive");
@@ -55,6 +58,59 @@
     var notificationOngoing = function(msg, type) {
         BillMachine.notification(msg, type, true);
     };
+	
+	var changeLog = (function() {
+		var Change = function(prev, data) {
+			this.prev = prev;
+			this.next = null;
+			this.data = data;
+		};
+		
+		var current = null;
+		
+		var updateTimeout = null;
+		
+		var _update = function() {
+			var next = new Change(current, BillMachine.getJSON());
+			if (current) current.next = next;
+			current = next;
+		};
+		
+		var update = function() {
+			clearTimeout(updateTimeout);
+			updateTimeout = setTimeout(_update, 300);
+		};
+				
+		var undoredo = function(prevnext) {
+			if (!current[prevnext]) return;
+			current = current[prevnext];
+        	BillMachine.setJSONData(current.data);
+		};
+		
+		var undo = function() {
+			undoredo("prev");
+		};
+		
+		var redo = function() {
+			undoredo("next");
+		};
+		
+		var keyevent = function(evt) {
+      		if (evt.ctrlKey || evt.shiftKey || evt.keyCode == 17) {
+				if (evt.keyCode == 90 && evt.ctrlKey) undo();
+      			if (evt.keyCode == 89 && evt.ctrlKey) redo();
+      			else if (evt.keyCode == 90 && evt.ctrlKey) redo();
+			}
+			else update();
+		};
+		
+		var init = function() {
+			update();
+			win.addEventListener("keyup", keyevent, false);
+		};
+		
+		init();
+	})();
 
     var hasChanges = false;
 
@@ -122,9 +178,19 @@
         }, false);
     };
 
-    var openSaved = function(name) {
+    var openSavedFromLocalstorage = function(name) {
         if (hasChangesCheck()) {
             open(name, JSON.parse(localStorage[name]));
+            return true;
+        }
+        return false;
+    };
+	
+    var openSaved = function() {
+        if (hasChangesCheck()) {
+			bn.openFileFromDisk(".rlk", function(fileName, data) {
+				open(fileName, JSON.parse(data));
+			});
             return true;
         }
         return false;
@@ -165,16 +231,22 @@
         });
     };
 
-    var saveToLocal = function(name) {
+    var saveToLocalstorage = function(name) {
         var data = JSON.stringify(BillMachine.getJSON());
         localStorage[name] = data;
         saveNotifySuccess();
     };
+	
+	var saveToDisk = function(name) {
+        var data = JSON.stringify(BillMachine.getJSON());
+		bn.saveFileToDisk(name + ".rlk", "text/rlk", data);
+		saveNotifySuccess();
+	};
 
     var prevSavedSel;
     var addOpenSavedOnClickEvent = function(el) {
         el.addEventListener("click", function() {
-            if (openSaved(this.textContent)) {
+            if (openSavedFromLocalstorage(this.textContent)) {
                 if (prevSavedSel !== undefined) {
                     prevSavedSel.className = prevSavedSel.className.replace(" selected", "");
                 }
@@ -264,10 +336,7 @@
 
     /* Event listeners */
     saveButtonEl.addEventListener("click", function() {
-        var name = getSaveName();
-        if(name) {
-            saveToLocal(name);
-        }
+		saveToDisk(fileNameBn.getValue() || DEFAULT_FILE_NAME); //saveToLocalstorage(name);
     }, false);
 
     saveToDriveButtonEl.addEventListener("click", function(evt) {
@@ -278,11 +347,8 @@
         saveToDriveClickEvent(this, evt, true);
     }, false);
 
-    if (loadButtonEl) loadButtonEl.addEventListener("click", function() {
-        var name = getSaveName();
-        if(name) {
-            openSaved(name);
-        }
+    if (openButtonEl) openButtonEl.addEventListener("click", function() {
+		openSaved();
     }, false);
 
     newButtonEl.addEventListener("click", function() {

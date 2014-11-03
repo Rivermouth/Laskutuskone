@@ -124,7 +124,11 @@ body.loading #controls              { right: -100%!important; }
 
 #barcode                            { line-height: 0; display: block; margin: 0 auto; margin-top: 10mm; }
 
-#controls                           { position: fixed; top: 2.3em; right: 0; width: 165px; padding: 1em; border: 1px solid #cecece; box-shadow: 1px 1px 3px #cecece; background: #fff; }
+#controls                           { position: fixed; top: 2.3em; right: 0; bottom: 1.3em; overflow-y: auto; width: 165px; padding: 1em; border: 1px solid #cecece; box-shadow: 1px 1px 3px #cecece; background: #fff; }
+
+#additional-settings                { position: relative; background: #fff; overflow: hidden; transition: 0.3s height; }
+#additional-settings.active 		{ border: 1px solid #ccc; box-shadow: 1px 1px 3px #ccc; }
+#additional-settings .inner         { padding: 0.7em; padding: 0.7em; }
 
 /* Notification */
 .notification-wrapper 				{ position: fixed; left: 0; top: 0; right: 0; }
@@ -133,8 +137,6 @@ body.loading #controls              { right: -100%!important; }
 .notification-wrapper.active .notification { top: 0em; }
 .notification.warn                  { background: #d6d38f; }
 
-#additional-settings                { position: absolute; left: 0.3em; right: 0; top: 100%; background: #fff; border: 1px solid #ccc; overflow: hidden; transition: 0.3s height; box-shadow: 1px 1px 3px #ccc; }
-#additional-settings .inner         { padding: 0.7em; padding: 0.7em; }
 
 #saved-bills                        { border-top: 1px solid #cecece; border-bottom: 1px solid #cecece; }
 .list-item                          { border-bottom: 1px solid #cecece; padding: 0.2em 6px; }

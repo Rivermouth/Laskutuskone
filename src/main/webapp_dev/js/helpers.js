@@ -34,6 +34,8 @@
     };
 
     bn.stringToDate = function(str) {
+		if (!str) return;
+		
         var d = new Date();
         var p = str.split(".");
         d.setDate(p[0]);
@@ -112,6 +114,42 @@
         var urlParts = url.split("?");
         bn.ajax("post", urlParts[0], callback, urlParts[1]);
     };
+	
+	bn.openFileFromDisk = function(accept, callback) {
+		if (!callback) return false;
+		
+		var inp = document.createElement("input");
+		inp.type = "file";
+		inp.setAttribute("accept", accept);
+		
+		inp.onchange = function(evt) {
+			var file = evt.target.files[0];
+			if (!file) return;
+			
+			var reader = new FileReader();
+			reader.onload = function(ev) {
+				callback(file.name.replace(".rlk", ""), ev.target.result);
+			};
+			reader.readAsText(file);
+			
+			inp.remove();
+		};
+		
+		document.body.appendChild(inp);
+		inp.click();
+	};
+	
+	bn.saveFileToDisk = function(fileName, mimeType, data) {
+		var a         = document.createElement("a");
+		a.href        = "data:" + mimeType + "," + data;
+		a.target      = "_blank";
+		a.download    = fileName;
+
+		document.body.appendChild(a);
+		a.click();
+		
+		a.remove();
+	};
 })(bn);
 
 Blob = (function() {
