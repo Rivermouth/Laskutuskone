@@ -303,27 +303,49 @@
         barcodeBnListener.onChange();
     };
 
-    BillMachine.notification = function(msg, type) {
-        if (!type) type = BillMachine.notification.TYPE_OK;
+    BillMachine.notification = (function() {
+		var dismiss = function(notifEl) {
+			notifEl.className = notifEl.className.replace(" active", "");
+			setTimeout(function() {
+				notifEl.remove();
+			}, 300);
+		};
+		
+		var notification = function(msg, type, force) {
+			// Remove ongoing forced notification
+			if (notification.ongoing !== null) {
+				dismiss(notification.ongoing);
+			}
 
-        var el = doc.createElement("div");
-        el.className = "notification " + type;
-        el.textContent = msg;
+			if (!type) type = notification.TYPE_OK;
 
-        doc.body.appendChild(el);
+			var el = doc.createElement("div");
+			el.className = "notification " + type;
+			el.textContent = msg;
 
-        setTimeout(function() {
-            el.className += " active ";
-        }, 100);
-        setTimeout(function() {
-            el.className = el.className.replace(" active", "");
-        }, 1000);
-        setTimeout(function() {
-            el.remove();
-        }, 1300);
-    };
-    BillMachine.notification.TYPE_OK = "ok";
-    BillMachine.notification.TYPE_WARN = "warn";
+			doc.body.appendChild(el);
+
+			setTimeout(function() {
+				el.className += " active ";
+			}, 100);
+
+			if (!force) {
+				setTimeout(function() {
+					dismiss(el);
+				}, 1000);
+			}
+			else {
+				notification.ongoing = el;
+			}
+		};
+		
+		notification.ongoing = null;
+		notification.TYPE_OK = "ok";
+		notification.TYPE_WARN = "warn";
+		
+		return notification;
+	})();
+	
     BillMachine.MIME_TYPE = "application/vnd.google.drive.ext-type.rlk";
     BillMachine.folderId = undefined;
     BillMachine.fileId = undefined;

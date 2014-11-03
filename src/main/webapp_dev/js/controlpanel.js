@@ -6,8 +6,11 @@
 
     /* Strings */
     var SAVE            = "Tallenna",
+		SAVING 			= "Tallennetaan...",
         SAVED           = "Tallennettu",
         SAVED_TO_DRIVE  = "Tallennettu Driveen",
+		
+		LOADING 		= "Ladataan...", 
         LOADED          = "Ladattu",
         DELETED         = "Poistettu",
         NEW             = "Uusi",
@@ -40,12 +43,17 @@
 
     var documentTitleBnO = new bn.O();
     documentTitleBnO.onChange = function(value) {
+		value = value || "";
         document.title = (value.length > 0 ? value : "Laskutuskone");
     };
     var fileNameBn = new bn(documentTitleBnO, ".file-name");
 
     var notification = function(msg, type) {
         BillMachine.notification(msg, type);
+    };
+	
+    var notificationOngoing = function(msg, type) {
+        BillMachine.notification(msg, type, true);
     };
 
     var hasChanges = false;
@@ -95,6 +103,7 @@
             console.warn("No file id given. Opening Drive Picker instead.");
             return openSavedFromDriveWithPicker();
         }
+		notificationOngoing(LOADING);
         var request = gapi.client.drive.files.get({
             'fileId': fileId
         });
@@ -126,10 +135,6 @@
         notification(text || SAVED);
     };
 
-    var saveToDatastore = function(data) {
-
-    };
-
     var saveToDrive = function(name, callback) {
         if (!BillMachine.folderId) {
             Drive.openFolderPicker(function(resp) {
@@ -143,6 +148,7 @@
             return;
         }
 
+		notificationOngoing(SAVING);
         var data = JSON.stringify(BillMachine.getJSON());
         var blob = new Blob([data], {type: BillMachine.MIME_TYPE});
         blob.fileName = name + ".rlk";
@@ -203,9 +209,9 @@
         savedBillsEl.appendChild(d);
     };
 
-    var getSaveName = function() {
+    var getSaveName = function(promptNewName) {
         var name = fileNameBn.getValue();
-        if (name === undefined || name <= 0) {
+        if (promptNewName || name === undefined || name <= 0) {
             name = prompt(NO_SAVE_FILE_NAME_NOTIF);
             if (name) {
                 return name;
@@ -239,9 +245,13 @@
         }
     };
 
-    var saveToDriveClickEvent = function(self, evt) {
-        var name = getSaveName();
+    var saveToDriveClickEvent = function(self, evt, promptNewName) {
+        var name = getSaveName(promptNewName);
         if(name) {
+			if (promptNewName) {
+				fileNameBn.setValue(null);
+        		setDriveFile(null);
+			}
             self.disabled = true;
             saveToDrive(name, function(resp) {
                 self.disabled = false;
@@ -265,10 +275,7 @@
     }, false);
 
     saveToDriveAsButtonEl.addEventListener("click", function(evt) {
-        fileNameBn.setValue(null);
-        setDriveFile(null);
-
-        saveToDriveClickEvent(this, evt);
+        saveToDriveClickEvent(this, evt, true);
     }, false);
 
     if (loadButtonEl) loadButtonEl.addEventListener("click", function() {
