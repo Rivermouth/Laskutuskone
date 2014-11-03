@@ -11,6 +11,7 @@ a.disabled                          { color: #ccc; text-decoration: none; }
 
 [contenteditable="true"] [style]    { font-family: inherit !important; font-size: inherit !important; font-weight: inherit !important; color: inherit !important; background: none !important; line-height: inherit !important; }
 
+h2 									{ margin-top: 1.4em; }
 
 /* Button */
 button                              { text-align: left; }

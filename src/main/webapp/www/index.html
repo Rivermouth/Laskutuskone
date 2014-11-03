@@ -30,25 +30,32 @@
         <div id="page" class="a4">
             <table class="col" id="bill-info-table">
                 <thead class="border-bottom text-bigger">
-                    <tr><td contenteditable="true" id="biller-name">Laskuttaja Oy</td><td>LASKU</td><td></td></tr>
+                    <tr>
+                        <td>
+							<div id="logo-wrapper">
+								<img id="logo" alt="">
+								<input type="file" accept="image/*" id="logo-input">
+								<button id="logo-remove">x</button>
+							</div>
+							<div contenteditable="true" id="biller-name"></div>
+						</td>
+                        <td>LASKU</td>
+                        <td></td>
+                    </tr>
                 </thead>
                 <tbody>
                     <tr class="padding-top">
-                        <td rowspan="5" id="client-info" class="client-info w-50p" contenteditable="true">Ostaja Oy
-                            Mikko Maksaja
-                            Hankintatie 12
-                            00100 Helsinki
-                        </td>
+                        <td rowspan="5" id="client-info" class="client-info w-50p" contenteditable="true"></td>
                         <td>Päiväys</td><td class="date-today" id="date" contenteditable="true"></td>
                     </tr>
                     <tr>
                         <td>Eräpäivä</td><td id="date-pay" class="date-pay"></td>
                     </tr>
                     <tr>
-                        <td>Maksuehto</td><td><span contenteditable="true" id="dates-to-pay">14</span><span>&nbsp;päivää netto</span></td>
+                        <td>Maksuehto</td><td><span contenteditable="true" id="dates-to-pay"></span><span>&nbsp;päivää netto</span></td>
                     </tr>
                     <tr>
-                        <td>Viivästyskorko</td><td contenteditable="true" id="pay-interest">8.0%</td>
+                        <td>Viivästyskorko</td><td contenteditable="true" id="pay-interest"></td>
                     </tr>
                     <tr>
                         <td>Laskun numero</td><td id="bill-id" class="bill-id" contenteditable="true"></td>
@@ -59,7 +66,7 @@
             <section class="row">
                 <div class="w-60p">
                     <b>Lisätiedot</b>
-                    <div contenteditable="true" id="additional-info">Lasku 1.2. - 29.2.2014 väliseltä ajalta</div>
+                    <div contenteditable="true" id="additional-info"></div>
                 </div>
             </section>
             <section>
@@ -76,7 +83,7 @@
                             <td contenteditable="true" class="count-unit td-no-wrap"></td>
                             <td contenteditable="true" class="aprice td-no-wrap"></td>
                             <td contenteditable="true" class="alvp td-no-wrap"></td>
-                            <td class="alve td-no-wrap"</td>
+                            <td class="alve td-no-wrap"></td>
                             <td class="sum td-no-wrap"></td>
                         </tr>
                     </tbody>
@@ -88,21 +95,13 @@
                 </table>
             </section>
             <footer>
-                <div contenteditable="true" id="notes">Huomioita</div>
+                <div contenteditable="true" id="notes"></div>
                 <hr class="dashed">
                 <table class="w-100p text-top" id="info">
                     <tbody>
-                        <td contenteditable="true" id="footer-1">Laskuttaja Oy
-                            Laskutuskatu 9
-                            00100 Helsinki
-                        </td>
-                        <td contenteditable="true" id="footer-2">+358 50 123 1234
-                            email@email.fi
-                            www.laskuttajaoy.fi
-                        </td>
-                        <td contenteditable="true" id="footer-3">Y-tunnus: 1234567-8
-                            Kotipaikka Helsinki
-                        </td>
+                        <td contenteditable="true" id="footer-1"></td>
+                        <td contenteditable="true" id="footer-2"></td>
+                        <td contenteditable="true" id="footer-3"></td>
                     </tbody>
                 </table>
                 <div id="tilisiirto">
@@ -117,8 +116,8 @@
                             </tr>
                             <tr>
                                 <td class="first">Saaja</td>
-                                <td id="payment-receiver" contenteditable="true">Saaja Sallinen</td>
-                                <td rowspan="2" colspan="3" id="bill-name" class="noborder-bottom" contenteditable="true">Laskun nimi<br><br><br></td>
+                                <td id="payment-receiver" contenteditable="true"></td>
+                                <td rowspan="2" colspan="3" id="bill-name" class="noborder-bottom" contenteditable="true"><br><br><br></td>
 
 
                             </tr>
@@ -159,31 +158,22 @@
                 <div id="auth-button" class="w-100p">a</div>
             </div>
 
-            <!-- File group -->
-            <div class="block">
-                <div>Ryhmä</div>
-                <select id="file-groups">
-                    <option disabled selected>Valitse ryhmä</option>
-                    <div id="file-groups-list"></div>
-                    <option id="new-file-group">Uusi...</option>
-                </select>
-            </div>
+            <input type="text" class="w-100p file-name hide-when-not-logged-in" id="save-name" placeholder="Tiedostonimi">
 
             <!-- Save/new/open -->
             <!-- save -->
             <div class="block">
-                <input type="text" class="w-100p" id="save-name" placeholder="Tiedostonimi">
                 <button class="w-100p hide-when-logged-in" id="save">
                     <img src="img/icomoon/Icons/PNG/16px/disk.png" alt="Tallenna"> Tallenna
                 </button>
-                <div class="hide-when-not-logged-in">
-                    <button class="w-100p" id="save-to-drive">
-                        <img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Tallenna Driveen"> Tallenna
-                    </button>
-                    <button class="w-100p hide-when-not-logged-in" id="save-to-drive-as">
-                        <img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Tallenna Driveen uutena tiedostona"> Tallenna nimellä
-                    </button>
-                </div>
+			</div>
+			<div class="block hide-when-not-logged-in">
+				<button class="w-100p" id="save-to-drive">
+					<img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Tallenna Driveen"> Tallenna
+				</button>
+				<button class="w-100p hide-when-not-logged-in" id="save-to-drive-as">
+					<img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Tallenna Driveen uutena tiedostona"> Tallenna nimellä
+				</button>
             </div>
 
             <!-- new -->
@@ -199,6 +189,11 @@
                     <img src="img/icomoon/Icons/PNG/16px/google-drive.png" alt="Avaa Drivestä"> Avaa
                 </button>
             </div>
+            <div class="hide-when-logged-in block">
+                <button class="w-100p" id="open">
+                    <img src="img/icomoon/Icons/PNG/16px/disk.png" alt="Avaa"> Avaa
+                </button>
+            </div>
 
 
             <!-- Print -->
@@ -211,6 +206,7 @@
             <!-- Saved files (local) -->
             <div class="hide-when-logged-in block">
                 <b>Tallennetut laskut</b>
+				<i><small>Tämä toiminto on vanhentunut. Voit edelleen avata tallentamasi tiedostot, mutta jatkossa tiedostot tallennetaan joko tietokoneen muistiin tai Google Driveen.</small></i>
                 <div id="saved-bills"></div>
             </div>
 
@@ -233,7 +229,10 @@
                     </div>
                 </div>
             </div>
+            <a href="#" onclick="window.open('help.html', null, 'width = 380, height = 600');" id="toggle-additional-settings">Ohje</a>
         </div>
+
+        <script src="js/laskutuskone.js"></script>
 
         <script>
             Drive.iconLink = "http://laskutuskone.appspot.com/icon_laskutuskone_16.png";
@@ -317,10 +316,10 @@
                     });
                 };
 
-                doAuth();
+				doAuth();
+                //startApp();
             })(window, document);
         </script>
-
-        <script src="js/laskutuskone.js"></script>
+		
     </body>
 </html>

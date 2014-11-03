@@ -94,9 +94,13 @@
  * BillMachine
  */
 
-(function(win, doc, JobRow) {
+(function(win, doc, JobRow, bn) {
 
     /* Elements */
+	var logoEl = doc.querySelector("#logo");
+	var logoWrapperEl = doc.querySelector("#logo-wrapper");
+	var logoInputEl = doc.querySelector("#logo-input");
+	var logoRemoveEl = doc.querySelector("#logo-remove");
     var billerNameEl = doc.querySelector("#biller-name");
     var paymentReceiverEl = doc.querySelector("#payment-receiver");
     var billInfoTable = doc.querySelector("#bill-info-table");
@@ -120,6 +124,8 @@
     var footer2El = doc.querySelector("#footer-2");
     var footer3El = doc.querySelector("#footer-3");
     var barcodeEl = doc.querySelector("#barcode");
+	
+	var CONFIRM_IMAGE_REMOVE = "Haluatko varmasti poistaa kuvan?";
 
 
     var jobRows = [];
@@ -127,6 +133,10 @@
     var isUpdating = false;
 
     var date;
+	
+	
+	/* BNs */
+	
     var totalBn;
     var totalElBn = new bn(".total");
 
@@ -182,7 +192,36 @@
         date = bn.stringToDate(bn.text(dateEl));
         dateBn.notify();
     };
-
+	
+	var logoBnO = new bn.O();
+	var logoBn = new bn(logoBnO);
+	logoBnO.onChange = function(value) {
+		value = value || "";
+		logoEl.src = value;
+		if (value.length <= 0) {
+			logoWrapperEl.className += " no-image ";
+		}
+		else {
+			logoWrapperEl.className = logoWrapperEl.className.replace(" no-image ", "");
+		}
+	};
+	logoInputEl.onchange = function(evt) {
+		var file = evt.target.files[0];
+		if (!file) return;
+		
+		var reader = new FileReader();
+		reader.onload = function(ev) {
+			logoBn.setValue(ev.target.result);
+		};
+		reader.readAsDataURL(file);
+	};
+	logoRemoveEl.onclick = function() {
+		if (!confirm(CONFIRM_IMAGE_REMOVE)) return;
+		logoBn.setValue(null);
+	};
+	
+	/* END BNs */
+	
     var calcRefNum = function(billId) {
         var wc = 0;
 
@@ -252,9 +291,7 @@
 
     BillMachine.initPage = function() {
         date = new Date();
-
         totalBn = new bn(totalBnListener);
-
         deleteAllJobRows();
     };
     BillMachine.update = function() {
@@ -276,6 +313,7 @@
     BillMachine.init = function() {
         isUpdating = true;
         BillMachine.initPage();
+        BillMachine.loadFromJSON(BillMachine.getDefaultJSON());
         BillMachine.update();
         isUpdating = false;
     };
@@ -303,8 +341,37 @@
         }
     };
 
+    BillMachine.getDefaultJSON = function() {
+        return {
+			"logo_base64":"",
+            "biller_name":"Laskuttaja Oy",
+            "payment_receiver":"Saaja Sallinen",
+            "bill_name":"Laskun nimi",
+            "bill_id":"",
+            "ref_num":"",
+            "date":bn.dateToString(date),
+            "date_pay":"",
+            "days_to_pay":"14",
+            "pay_interest":"8.0%",
+            "client":"Ostaja Oy\nMikko Maksaja\nHankintatie 12\n00100 Helsinki",
+            "additional_info":"Lasku 1.2. - 29.2.2014 väliseltä ajalta",
+            "no_vat_total":"0.00",
+            "vat_total":"0.00",
+            "total":"0.00",
+            "account_number":"",
+            "account_shortcode":"",
+            "job_rows":[],
+            "footer1":"Laskuttaja Oy\nLaskutuskatu 9\n00100 Helsinki",
+            "footer2":"+358 50 123 1234\nemail@email.fi\nwww.laskuttajaoy.fi",
+            "footer3":"Y-tunnus: 1234567-8\nKotipaikka Helsinki",
+            "notes":"Huomioita"
+        };
+   };
+
     BillMachine.getJSON = function() {
         return {
+			logo_base64: logoBn.getValue(),
+			
             biller_name: bn.text(billerNameEl),
             payment_receiver: bn.text(paymentReceiverEl),
 
@@ -337,10 +404,9 @@
         };
     };
 
-    BillMachine.loadFromJSON = function(json) {
-        isUpdating = true;
-        BillMachine.initPage();
-
+	BillMachine.setJSONData = function(json) {
+		logoBn.setValue(json.logo_base64);
+		
         bn.text(billerNameEl, json.biller_name);
         bn.text(paymentReceiverEl, json.payment_receiver);
 
@@ -364,40 +430,73 @@
         bn.text(footer3El, json.footer3);
 
         bn.text(notesEl, json.notes);
-
+	};
+	
+    BillMachine.loadFromJSON = function(json) {
+        isUpdating = true;
+        BillMachine.initPage();
+		
+		BillMachine.setJSONData(json);
+		
         BillMachine.update();
         isUpdating = false;
         barcodeBnListener.onChange();
     };
 
-    BillMachine.notification = function(msg, type) {
-        if (!type) type = BillMachine.notification.TYPE_OK;
+    BillMachine.notification = (function() {
+		var dismiss = function(notifEl) {
+			notifEl.className = notifEl.className.replace(" active", "");
+			setTimeout(function() {
+				notifEl.remove();
+			}, 300);
+		};
+		
+		var notification = function(msg, type, force) {
+			// Remove ongoing forced notification
+			if (notification.ongoing !== null) {
+				dismiss(notification.ongoing);
+			}
 
-        var el = doc.createElement("div");
-        el.className = "notification " + type;
-        el.textContent = msg;
+			if (!type) type = notification.TYPE_OK;
 
-        doc.body.appendChild(el);
+			var el = doc.createElement("div");
+			el.className = "notification-wrapper";
+			var elInner = doc.createElement("div");
+			elInner.className = "notification " + type;
+			elInner.textContent = msg;
 
-        setTimeout(function() {
-            el.className += " active ";
-        }, 100);
-        setTimeout(function() {
-            el.className = el.className.replace(" active", "");
-        }, 1000);
-        setTimeout(function() {
-            el.remove();
-        }, 1300);
-    };
-    BillMachine.notification.TYPE_OK = "ok";
-    BillMachine.notification.TYPE_WARN = "warn";
+			el.appendChild(elInner);
+			doc.body.appendChild(el);
+
+			setTimeout(function() {
+				el.className += " active ";
+			}, 100);
+
+			if (!force) {
+				setTimeout(function() {
+					dismiss(el);
+				}, 1000);
+			}
+			else {
+				el.className += " ongoing";
+				notification.ongoing = el;
+			}
+		};
+		
+		notification.ongoing = null;
+		notification.TYPE_OK = "ok";
+		notification.TYPE_WARN = "warn";
+		
+		return notification;
+	})();
+	
     BillMachine.MIME_TYPE = "application/vnd.google.drive.ext-type.rlk";
     BillMachine.folderId = undefined;
     BillMachine.fileId = undefined;
 
     bn.BillMachine = BillMachine;
 
-})(window, document, bn.JobRow);
+})(window, document, bn.JobRow, bn);
 
 /***
  * Control panel
@@ -407,28 +506,34 @@
 
     /* Strings */
     var SAVE            = "Tallenna",
+		SAVING 			= "Tallennetaan...",
         SAVED           = "Tallennettu",
         SAVED_TO_DRIVE  = "Tallennettu Driveen",
+		
+		LOADING 		= "Ladataan...", 
         LOADED          = "Ladattu",
         DELETED         = "Poistettu",
         NEW             = "Uusi",
+		
+		DEFAULT_FILE_NAME 			= "lasku",
 
-        NO_SAVE_FILE_NAME_NOTIF     = "Anna tiedostonimi.",
+        NO_SAVE_FILE_NAME_NOTIF     = "Anna tiedostonimi:",
         CONFIRM_LOST_UNSAVED        = "Tallentamattomat tiedot menetetään. Haluatko jatkaa?",
         CONFIRM_BILL_DELETE         = "Haluatko varmasti poistaa tallennetun laskun?",
-        GIVE_FILE_NAME              = "Anna tiedostonimi",
+        GIVE_FILE_NAME              = "Anna tiedostonimi:",
 
-        GIVE_FILE_GROUP_NAME        = "Anna ryhmän nimi"
+        GIVE_FILE_GROUP_NAME        = "Anna ryhmän nimi:"
     ;
 
     /* Elements */
     var body = doc.getElementsByTagName("body")[0];
     var pageEl = doc.querySelector("#page");
     var controlPanel = doc.querySelector("#controls");
-    var saveNameInputEl = doc.querySelector("#save-name");
+    var saveNameEl = doc.querySelector("#save-name");
     var saveButtonEl = doc.querySelector("#save");
     var saveToDriveButtonEl = doc.querySelector("#save-to-drive");
     var saveToDriveAsButtonEl = doc.querySelector("#save-to-drive-as");
+    var openButtonEl = doc.querySelector("#open");
     var loadButtonEl = doc.querySelector("#load");
     var newButtonEl = doc.querySelector("#new");
     var openFromDriveEl = doc.querySelector("#open-from-drive");
@@ -438,12 +543,74 @@
     var toggleAdditionalSettingsEl = doc.querySelector("#toggle-additional-settings");
     var additionalSettingsEl = doc.querySelector("#additional-settings");
     var showInDriveEl = doc.querySelector("#show-in-drive");
-    var fileGroupsEl = doc.querySelector("#file-groups");
-    var newFileGroupEl = doc.querySelector("#new-file-group");
+
+    var documentTitleBnO = new bn.O();
+    documentTitleBnO.onChange = function(value) {
+		value = value || "";
+        document.title = (value.length > 0 ? value : "Laskutuskone");
+    };
+    var fileNameBn = new bn(documentTitleBnO, ".file-name");
 
     var notification = function(msg, type) {
         BillMachine.notification(msg, type);
     };
+	
+    var notificationOngoing = function(msg, type) {
+        BillMachine.notification(msg, type, true);
+    };
+	
+	var changeLog = (function() {
+		var Change = function(prev, data) {
+			this.prev = prev;
+			this.next = null;
+			this.data = data;
+		};
+		
+		var current = null;
+		
+		var updateTimeout = null;
+		
+		var _update = function() {
+			var next = new Change(current, BillMachine.getJSON());
+			if (current) current.next = next;
+			current = next;
+		};
+		
+		var update = function() {
+			clearTimeout(updateTimeout);
+			updateTimeout = setTimeout(_update, 300);
+		};
+				
+		var undoredo = function(prevnext) {
+			if (!current[prevnext]) return;
+			current = current[prevnext];
+        	BillMachine.setJSONData(current.data);
+		};
+		
+		var undo = function() {
+			undoredo("prev");
+		};
+		
+		var redo = function() {
+			undoredo("next");
+		};
+		
+		var keyevent = function(evt) {
+      		if (evt.ctrlKey || evt.shiftKey || evt.keyCode == 17) {
+				if (evt.keyCode == 90 && evt.ctrlKey) undo();
+      			if (evt.keyCode == 89 && evt.ctrlKey) redo();
+      			else if (evt.keyCode == 90 && evt.ctrlKey) redo();
+			}
+			else update();
+		};
+		
+		var init = function() {
+			update();
+			win.addEventListener("keyup", keyevent, false);
+		};
+		
+		init();
+	})();
 
     var hasChanges = false;
 
@@ -482,7 +649,7 @@
 
     var open = function(name, json) {
         BillMachine.loadFromJSON(json);
-        saveNameInputEl.value = name;
+        fileNameBn.setValue(name);
         setHasChangesFalse();
         notification(LOADED);
     };
@@ -492,6 +659,7 @@
             console.warn("No file id given. Opening Drive Picker instead.");
             return openSavedFromDriveWithPicker();
         }
+		notificationOngoing(LOADING);
         var request = gapi.client.drive.files.get({
             'fileId': fileId
         });
@@ -505,13 +673,24 @@
 
     var openSavedFromDriveWithPicker = function() {
         Drive.openPicker(BillMachine.MIME_TYPE, function(file) {
+            if (!file) return false;
             openSavedFromDrive(file.id);
         }, false);
     };
 
-    var openSaved = function(name) {
+    var openSavedFromLocalstorage = function(name) {
         if (hasChangesCheck()) {
             open(name, JSON.parse(localStorage[name]));
+            return true;
+        }
+        return false;
+    };
+	
+    var openSaved = function() {
+        if (hasChangesCheck()) {
+			bn.openFileFromDisk(".rlk", function(fileName, data) {
+				open(fileName, JSON.parse(data));
+			});
             return true;
         }
         return false;
@@ -522,45 +701,52 @@
         notification(text || SAVED);
     };
 
-    var saveToDatastore = function(data) {
-
-    };
-
     var saveToDrive = function(name, callback) {
         if (!BillMachine.folderId) {
             Drive.openFolderPicker(function(resp) {
+                if (!resp && callback) {
+                    callback(false);
+                    return;
+                }
                 setDriveFolderId(resp.id);
                 saveToDrive(name, callback);
             });
             return;
         }
 
+		notificationOngoing(SAVING);
         var data = JSON.stringify(BillMachine.getJSON());
         var blob = new Blob([data], {type: BillMachine.MIME_TYPE});
         blob.fileName = name + ".rlk";
 
         html2canvas(pageEl, {
             onrendered: function(canvas) {
-                console.log(canvas.toDataURL("image/png"));
                 Drive.insertFile(blob, BillMachine.folderId, BillMachine.fileId, canvas.toDataURL("image/png"), function(file) {
                     setDriveFile(file);
                     saveNotifySuccess(SAVED_TO_DRIVE);
                     if (callback) callback(true);
                 });
-            }
+            },
+            background: "#fff"
         });
     };
 
-    var saveToLocal = function(name) {
+    var saveToLocalstorage = function(name) {
         var data = JSON.stringify(BillMachine.getJSON());
         localStorage[name] = data;
         saveNotifySuccess();
     };
+	
+	var saveToDisk = function(name) {
+        var data = JSON.stringify(BillMachine.getJSON());
+		bn.saveFileToDisk(name + ".rlk", "text/rlk", data);
+		saveNotifySuccess();
+	};
 
     var prevSavedSel;
     var addOpenSavedOnClickEvent = function(el) {
         el.addEventListener("click", function() {
-            if (openSaved(this.textContent)) {
+            if (openSavedFromLocalstorage(this.textContent)) {
                 if (prevSavedSel !== undefined) {
                     prevSavedSel.className = prevSavedSel.className.replace(" selected", "");
                 }
@@ -595,11 +781,14 @@
         savedBillsEl.appendChild(d);
     };
 
-    var getSaveName = function() {
-        var name = saveNameInputEl.value;
-        if (name <= 0) {
-            alert(NO_SAVE_FILE_NAME_NOTIF);
-            return false;
+    var getSaveName = function(promptNewName) {
+        var name = fileNameBn.getValue();
+        if (promptNewName || name === undefined || name <= 0) {
+            name = prompt(NO_SAVE_FILE_NAME_NOTIF);
+            if (name) {
+                return name;
+            }
+            else return false;
         }
         return name;
     };
@@ -628,64 +817,26 @@
         }
     };
 
-    var saveToDriveClickEvent = function(self, evt) {
-        var name = getSaveName();
+    var saveToDriveClickEvent = function(self, evt, promptNewName) {
+        var name = getSaveName(promptNewName);
         if(name) {
+			if (promptNewName) {
+				fileNameBn.setValue(null);
+        		setDriveFile(null);
+			}
             self.disabled = true;
-            saveToDrive(name, function() {
+            saveToDrive(name, function(resp) {
                 self.disabled = false;
+                if (resp) {
+                    fileNameBn.setValue(name);
+                }
             });
         }
     };
 
-    var FileGroup = {
-        listEl: doc.querySelector("#file-groups-list")
-    };
-    FileGroup.url = window.location.href.replace("8000", "8080") + "filegroup";
-    FileGroup.save = function(id, name) {
-        var params = [];
-        if (id !== null) params.push("id=" + id);
-        params.push("name=" + name);
-        bn.postAjax(FileGroup.url + "?" + params.join("&"), function(resp) {
-            console.log(resp);
-        });
-    };
-    FileGroup.load = function(id) {
-        bn.getAjax(FileGroup.url + "?id=" + id, function(resp) {
-        });
-    };
-    FileGroup.loadList = function(callback) {
-        bn.getAjax(FileGroup.url, function(resp) {
-            callback(JSON.parse(resp));
-        });
-    };
-    FileGroup.renderList = function() {
-        FileGroup.listEl.innerHTML = "";
-        FileGroup.loadList(function(groups) {
-            var d = doc.createDocumentFragment();
-            for (var i = 0, l = groups.length; i < l; ++i) {
-                var group = groups[i];
-                var option = doc.createElement("option");
-                option.textContent = group.name;
-                option.name = group.id;
-            }
-            FileGroup.listEl.appendChild(d);
-        });
-    };
-    FileGroup.createNew = function() {
-        var newName = prompt(GIVE_FILE_GROUP_NAME);
-        if (newName !== null) {
-            FileGroup.save(newName);
-        }
-    };
-
-
     /* Event listeners */
     saveButtonEl.addEventListener("click", function() {
-        var name = getSaveName();
-        if(name) {
-            saveToLocal(name);
-        }
+		saveToDisk(fileNameBn.getValue() || DEFAULT_FILE_NAME); //saveToLocalstorage(name);
     }, false);
 
     saveToDriveButtonEl.addEventListener("click", function(evt) {
@@ -693,20 +844,11 @@
     }, false);
 
     saveToDriveAsButtonEl.addEventListener("click", function(evt) {
-        var newName = prompt(GIVE_FILE_NAME);
-        if (newName === null) return;
-
-        saveNameInputEl.value = newName;
-        setDriveFile(null);
-
-        saveToDriveClickEvent(this, evt);
+        saveToDriveClickEvent(this, evt, true);
     }, false);
 
-    if (loadButtonEl) loadButtonEl.addEventListener("click", function() {
-        var name = getSaveName();
-        if(name) {
-            openSaved(name);
-        }
+    if (openButtonEl) openButtonEl.addEventListener("click", function() {
+		openSaved();
     }, false);
 
     newButtonEl.addEventListener("click", function() {
@@ -716,16 +858,6 @@
     openFromDriveEl.addEventListener("click", function() {
         openSavedFromDrive();
     });
-
-    fileGroupsEl.addEventListener("change", function(evt) {
-        var selectedOption = this[this.selectedIndex];
-        switch (selectedOption.name) {
-            default:
-                if (selectedOption.id === newFileGroupEl.id) {
-                    FileGroup.createNew();
-                }
-        }
-    }, false);
 
     /* END Event listeners */
 
