@@ -2,9 +2,13 @@
  * BillMachine
  */
 
-(function(win, doc, JobRow) {
+(function(win, doc, JobRow, bn) {
 
     /* Elements */
+	var logoEl = doc.querySelector("#logo");
+	var logoWrapperEl = doc.querySelector("#logo-wrapper");
+	var logoInputEl = doc.querySelector("#logo-input");
+	var logoRemoveEl = doc.querySelector("#logo-remove");
     var billerNameEl = doc.querySelector("#biller-name");
     var paymentReceiverEl = doc.querySelector("#payment-receiver");
     var billInfoTable = doc.querySelector("#bill-info-table");
@@ -28,6 +32,8 @@
     var footer2El = doc.querySelector("#footer-2");
     var footer3El = doc.querySelector("#footer-3");
     var barcodeEl = doc.querySelector("#barcode");
+	
+	var CONFIRM_IMAGE_REMOVE = "Haluatko varmasti poistaa kuvan?";
 
 
     var jobRows = [];
@@ -35,6 +41,10 @@
     var isUpdating = false;
 
     var date;
+	
+	
+	/* BNs */
+	
     var totalBn;
     var totalElBn = new bn(".total");
 
@@ -90,7 +100,36 @@
         date = bn.stringToDate(bn.text(dateEl));
         dateBn.notify();
     };
-
+	
+	var logoBnO = new bn.O();
+	var logoBn = new bn(logoBnO);
+	logoBnO.onChange = function(value) {
+		value = value || "";
+		logoEl.src = value;
+		if (value.length <= 0) {
+			logoWrapperEl.className += " no-image ";
+		}
+		else {
+			logoWrapperEl.className = logoWrapperEl.className.replace(" no-image ", "");
+		}
+	};
+	logoInputEl.onchange = function(evt) {
+		var file = evt.target.files[0];
+		if (!file) return;
+		
+		var reader = new FileReader();
+		reader.onload = function(ev) {
+			logoBn.setValue(ev.target.result);
+		};
+		reader.readAsDataURL(file);
+	};
+	logoRemoveEl.onclick = function() {
+		if (!confirm(CONFIRM_IMAGE_REMOVE)) return;
+		logoBn.setValue(null);
+	};
+	
+	/* END BNs */
+	
     var calcRefNum = function(billId) {
         var wc = 0;
 
@@ -212,6 +251,7 @@
 
     BillMachine.getDefaultJSON = function() {
         return {
+			"logo_base64":"",
             "biller_name":"Laskuttaja Oy",
             "payment_receiver":"Saaja Sallinen",
             "bill_name":"Laskun nimi",
@@ -238,6 +278,8 @@
 
     BillMachine.getJSON = function() {
         return {
+			logo_base64: logoBn.getValue(),
+			
             biller_name: bn.text(billerNameEl),
             payment_receiver: bn.text(paymentReceiverEl),
 
@@ -273,7 +315,9 @@
     BillMachine.loadFromJSON = function(json) {
         isUpdating = true;
         BillMachine.initPage();
-
+		
+		logoBn.setValue(json.logo_base64);
+		
         bn.text(billerNameEl, json.biller_name);
         bn.text(paymentReceiverEl, json.payment_receiver);
 
@@ -320,9 +364,12 @@
 			if (!type) type = notification.TYPE_OK;
 
 			var el = doc.createElement("div");
-			el.className = "notification " + type;
-			el.textContent = msg;
+			el.className = "notification-wrapper";
+			var elInner = doc.createElement("div");
+			elInner.className = "notification " + type;
+			elInner.textContent = msg;
 
+			el.appendChild(elInner);
 			doc.body.appendChild(el);
 
 			setTimeout(function() {
@@ -335,6 +382,7 @@
 				}, 1000);
 			}
 			else {
+				el.className += " ongoing";
 				notification.ongoing = el;
 			}
 		};
@@ -352,4 +400,4 @@
 
     bn.BillMachine = BillMachine;
 
-})(window, document, bn.JobRow);
+})(window, document, bn.JobRow, bn);

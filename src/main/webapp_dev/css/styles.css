@@ -31,8 +31,9 @@ table tfoot
 table tr                            { width: 100%; }
 
 table thead                         { font-weight: bold; }
+table thead td 						{ vertical-align: top; }
 
-table td                            { white-space: pre; }
+*[contenteditable="true"]           { white-space: pre; }
 table.text-top tr td                { vertical-align: top; }
 table td.text-middle                { vertical-align: middle!important; }
 
@@ -84,6 +85,14 @@ body.loading #controls              { right: -100%!important; }
 
 #page header                        { font-size: 1.2em; padding-top: 0.5em; padding-bottom: 0.2em; }
 
+#logo-wrapper 						{ position: relative; max-height: 70px; overflow: hidden; }
+#logo-input 						{ position: absolute; left: 0; top: 0; padding-left: 9999px; border: 0; }
+#logo-input:after 					{ content: "Valitse kuva (360x70)"; position: absolute; left: 2px; top: 2px; }
+#logo-remove 						{ position: absolute; right: 2px; top: 2px; }
+#logo-input:after, #logo-remove 	{ padding: 4px; background: #fff; border: 1px solid #ccc; border-radius: 3px; font-size: 0.7em; line-height: 1em; opacity: 0.5; transition: opacity 0.2s; }
+#logo-wrapper:hover #logo-input:after, 
+#logo-wrapper:hover #logo-remove 	{ opacity: 1; }
+#logo 								{ max-width: 360px; height: auto; }
 
 .aprice:after,
 .alve:after,
@@ -116,8 +125,12 @@ body.loading #controls              { right: -100%!important; }
 #barcode                            { line-height: 0; display: block; margin: 0 auto; margin-top: 10mm; }
 
 #controls                           { position: fixed; top: 2.3em; right: 0; width: 165px; padding: 1em; border: 1px solid #cecece; box-shadow: 1px 1px 3px #cecece; background: #fff; }
+
+/* Notification */
+.notification-wrapper 				{ position: fixed; left: 0; top: 0; right: 0; }
+.notification-wrapper.ongoing 		{ bottom: 0; background: rgba(0, 0, 0, 0.2); }
 .notification                       { position: fixed; left: 50%; top: -2em; width: 400px; margin-left: -200px; overflow: hidden; background: #8fd68f; color: #000; text-align: center; line-height: 2em; border-radius: 0 0 3px 3px; transition: 0.3s all; }
-.notification.active                { top: 0em; }
+.notification-wrapper.active .notification { top: 0em; }
 .notification.warn                  { background: #d6d38f; }
 
 #additional-settings                { position: absolute; left: 0.3em; right: 0; top: 100%; background: #fff; border: 1px solid #ccc; overflow: hidden; transition: 0.3s height; box-shadow: 1px 1px 3px #ccc; }
@@ -151,6 +164,9 @@ body.loading #controls              { right: -100%!important; }
 
 @media print {
     body > *,
+	#logo-wrapper.no-image, 
+	#logo-input, 
+	#logo-remove, 
     #widget_bounds,
     #controls,
     #new-job-row                    { display: none; }
