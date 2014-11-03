@@ -10,7 +10,7 @@ Laskutuskone on Google Drive™ lisäosa.
 
 ##Lisenssi
 
-Laskutuskone on Rivermouth Oy:n kehittämä ja ylläpitämä tuote. Laskutuskone on julkaistu MIT-lisenssin 
+Laskutuskone on Rivermouth Oy:n kehittämä ja ylläpitämä tuote. Laskutuskone on julkaistu Apache 2.0 -lisenssin 
 alla. Huomioi että Laskutuskoneen käyttämät sovelluskirjastot saattavat poiketa lisenssiltään Laskutuskoneen lisenssistä.
 
 
