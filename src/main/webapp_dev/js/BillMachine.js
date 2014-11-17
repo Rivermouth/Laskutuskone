@@ -148,6 +148,7 @@
     };
 
     var deleteAllJobRows = function() {
+        totalBn = new bn(totalBnListener);
         for (var i=0, l=jobRows.length; i<l; ++i) {
             jobRows[i].remove();
         }
@@ -199,7 +200,6 @@
 
     BillMachine.initPage = function() {
         date = new Date();
-        totalBn = new bn(totalBnListener);
         deleteAllJobRows();
     };
     BillMachine.update = function() {

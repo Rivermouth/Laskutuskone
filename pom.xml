@@ -20,16 +20,6 @@
     <dependencies>
         <!-- Compile/runtime dependencies -->
         <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-api-1.0-sdk</artifactId>
-            <version>1.9.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-endpoints</artifactId>
-            <version>1.9.4</version>
-        </dependency>
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
@@ -46,13 +36,22 @@
             <version>3.0.1</version>
         </dependency>
         
+        <!-- Google -->
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api-1.0-sdk</artifactId>
+            <version>1.9.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-endpoints</artifactId>
+            <version>1.9.4</version>
+        </dependency>
         <dependency>
 			<groupId>com.google.api.client</groupId>
 			<artifactId>google-api-client-googleapis</artifactId>
 			<version>1.4.0-alpha</version>
 		</dependency>
-
-        
 
         <!-- Test Dependencies -->
         <dependency>

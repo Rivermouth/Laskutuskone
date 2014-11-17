@@ -240,6 +240,7 @@
     };
 
     var deleteAllJobRows = function() {
+        totalBn = new bn(totalBnListener);
         for (var i=0, l=jobRows.length; i<l; ++i) {
             jobRows[i].remove();
         }
@@ -291,7 +292,6 @@
 
     BillMachine.initPage = function() {
         date = new Date();
-        totalBn = new bn(totalBnListener);
         deleteAllJobRows();
     };
     BillMachine.update = function() {
@@ -598,14 +598,13 @@
 		var keyevent = function(evt) {
       		if (evt.ctrlKey || evt.shiftKey || evt.keyCode == 17) {
 				if (evt.keyCode == 90 && evt.ctrlKey) undo();
-      			if (evt.keyCode == 89 && evt.ctrlKey) redo();
-      			else if (evt.keyCode == 90 && evt.ctrlKey) redo();
+      			else if (evt.keyCode == 89 && evt.ctrlKey) redo();
+      			//else if (evt.keyCode == 90 && evt.ctrlKey) redo();
 			}
 			else update();
 		};
 		
 		var init = function() {
-			update();
 			win.addEventListener("keyup", keyevent, false);
 		};
 		
