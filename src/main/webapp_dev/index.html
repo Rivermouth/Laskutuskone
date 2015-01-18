@@ -253,7 +253,21 @@
             Drive.iconLink = "http://laskutuskone.appspot.com/icon_laskutuskone_16.png";
 
             (function(win, doc) {
-                bn.addClass(doc.body, "loading");
+                
+                var BillMachine = bn.BillMachine;
+                
+                function setLoading(bool) {
+                    if (bool) {
+                        BillMachine.notification("Ladataan...", BillMachine.notification.TYPE_OK, true);
+                        bn.addClass(doc.body, "loading");
+                    }
+                    else {
+                        bn.removeClass(doc.body, "loading");
+                        BillMachine.notification("Ladattu!", BillMachine.notification.TYPE_OK);
+                    }
+                }
+                
+                setLoading(true);
 
                 var api;
 
@@ -280,14 +294,14 @@
                     doc.body.id = "logged-in";
                     bn.BillMachine.init();
                     handleDriveAction();
-                    bn.removeClass(doc.body, "loading");
+                    setLoading(false);
                 };
 
                 var startApp = function() {
                     doc.body.id = "not-logged-in";
                     bn.BillMachine.init();
                     bn.BillMachine.loadSavedList();
-                    bn.removeClass(doc.body, "loading");
+                    setLoading(false);
                 };
 
                 var doAuth = function() {
@@ -321,7 +335,7 @@
                             }
                             else {
                                 startApp();
-                                throw "Error loading API";
+                                console.warn("Error loading API");
                             }
                         }
                         else {

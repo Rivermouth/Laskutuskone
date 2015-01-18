@@ -271,8 +271,8 @@ footer                              { position: absolute; left: 20px; right: 20p
  */
 body #page,
 body #controls                      { transition: 0.8s all; }
-body.loading #page                  { left: -100%!important; }
-body.loading #controls              { right: -100%!important; }
+body.loading #page, 
+body.loading #controls              { opacity: 0.2; }
 #page                               { position: relative; left: 0; background: #fff; }
 #page.a4                            { width: 210mm; height: 296mm; top: 2.3em; margin: 0 auto; margin-bottom: 2.3em; border: 1px solid #cecece; box-shadow: 1px 1px 3px #cecece; box-sizing: border-box; padding: 1.7em 20px; }
 
